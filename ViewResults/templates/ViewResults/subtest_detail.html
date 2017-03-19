@@ -1,0 +1,48 @@
+
+<h2>Subtest parameters</h2>
+{% if test_parameter_list %}
+    <table class="table">
+        {% for t in test_parameter_list %}
+            <tr>
+                <th>{{ t.name }}</th>
+                <td>{{ t.value }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No subtest parameters.</p>
+{% endif %}
+
+<h2>Subtest statistics</h2>
+{% if statistic_list %}
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Result</th>
+        </tr>
+        {% for s in statistic_list %}
+            <tr>
+                <td>{{ s.name }}</td>
+                <td>{{ s.value }}</td>
+                <td>{{ s.result }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No subtest statistics.</p>
+{% endif %}
+
+<h2>P-Values</h2>
+{% if p_value_list %}
+    <table class="table">
+        {% for p in p_value_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ p.value }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No p-values.</p>
+{% endif %}

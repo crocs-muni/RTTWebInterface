@@ -1,0 +1,507 @@
+
+class Experiment(object):
+    table_name = "experiments"
+    expected_tuple_els = 8
+
+    def __init__(self, tup):
+        check_init_tuple(tup, Experiment.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.name = tup[1]
+        self.author_email = tup[2]
+        self.created = tup[3]
+        self.status = tup[4]
+        self.config_file = tup[5]
+        self.data_file = tup[6]
+        self.data_file_sha256 = tup[7]
+
+    def __str__(self):
+        return "{} - ID: {}, Name: {}".format(self.__class__.__name__, self.id, self.name)
+
+    @staticmethod
+    def get_all(conn) -> ['Experiment']:
+        return get_all_db_objects(conn, Experiment, Experiment.table_name)
+
+    @staticmethod
+    def get_by_id(conn, experiment_id) -> 'Experiment':
+        return get_db_object_by_primary_id(conn, Experiment, Experiment.table_name, experiment_id)
+
+
+class Job(object):
+    table_name = "jobs"
+    foreign_id_column = "experiment_id"
+    expected_tuple_els = 4
+    
+    def __init__(self, tup):
+        check_init_tuple(tup, Job.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.battery = tup[1]
+        self.status = tup[2]
+        self.experiment_id = tup[3]
+
+    def __str__(self):
+        return "{} - ID: {}, Battery: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
+                                                                    self.battery, self.experiment_id)
+
+    @staticmethod
+    def get_all(conn) -> ['Job']:
+        return get_all_db_objects(conn, Job, Job.table_name)
+
+    @staticmethod
+    def get_by_id(conn, job_id) -> 'Job':
+        return get_db_object_by_primary_id(conn, Job, Job.table_name, job_id)
+
+    @staticmethod
+    def get_by_experiment_id(conn, experiment_id) -> ['Job']:
+        return get_db_objects_by_foreign_id(conn, Job, Job.table_name,
+                                            experiment_id, Job.foreign_id_column)
+
+
+class Battery(object):
+    table_name = "batteries"
+    foreign_id_column = "experiment_id"
+    expected_tuple_els = 6
+
+    def __init__(self, tup):
+        check_init_tuple(tup, Battery.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.name = tup[1]
+        self.passed_tests = tup[2]
+        self.total_tests = tup[3]
+        self.alpha = tup[4]
+        self.experiment_id = tup[5]
+
+    def __str__(self):
+        return "{} - ID: {}, Name: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
+                                                                 self.name, self.experiment_id)
+
+    @staticmethod
+    def get_all(conn) -> ['Battery']:
+        return get_all_db_objects(conn, Battery, Battery.table_name)
+
+    @staticmethod
+    def get_by_id(conn, battery_id) -> 'Battery':
+        return get_db_object_by_primary_id(conn, Battery, Battery.table_name, battery_id)
+
+    @staticmethod
+    def get_by_experiment_id(conn, experiment_id) -> ['Battery']:
+        return get_db_objects_by_foreign_id(conn, Battery, Battery.table_name,
+                                            experiment_id, Battery.foreign_id_column)
+
+
+class BatteryError(object):
+    table_name = "battery_errors"
+    foreign_id_column = "battery_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, BatteryError.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.message = tup[1]
+        self.battery_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Message: {}, Battery ID: {}".format(self.__class__.__name__, self.id,
+                                                                 self.mess, self.battery_id)
+
+    @staticmethod
+    def get_all(conn) -> ['BatteryError']:
+        return get_all_db_objects(conn, BatteryError, BatteryError.table_name)
+
+    @staticmethod
+    def get_by_id(conn, battery_error_id) -> 'BatteryError':
+        return get_db_object_by_primary_id(conn, BatteryError, BatteryError.table_name, battery_error_id)
+
+    @staticmethod
+    def get_by_battery_id(conn, battery_id) -> ['BatteryError']:
+        return get_db_objects_by_foreign_id(conn, BatteryError, BatteryError.table_name,
+                                            battery_id, BatteryError.foreign_id_column)
+
+
+class BatteryWarning(object):
+    table_name = "battery_warnings"
+    foreign_id_column = "battery_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, BatteryWarning.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.message = tup[1]
+        self.battery_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Message: {}, Battery ID: {}".format(self.__class__.__name__, self.id,
+                                                                 self.mess, self.battery_id)
+
+    @staticmethod
+    def get_all(conn) -> ['BatteryWarning']:
+        return get_all_db_objects(conn, BatteryWarning, BatteryWarning.table_name)
+
+    @staticmethod
+    def get_by_id(conn, battery_error_id) -> 'BatteryWarning':
+        return get_db_object_by_primary_id(conn, BatteryWarning, BatteryWarning.table_name, battery_error_id)
+
+    @staticmethod
+    def get_by_battery_id(conn, battery_id) -> ['BatteryWarning']:
+        return get_db_objects_by_foreign_id(conn, BatteryWarning, BatteryWarning.table_name,
+                                            battery_id, BatteryWarning.foreign_id_column)
+
+
+class Test(object):
+    table_name = "tests"
+    foreign_id_column = "battery_id"
+    expected_tuple_els = 6
+
+    def __init__(self, tup):
+        check_init_tuple(tup, Test.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.name = tup[1]
+        self.partial_alpha = tup[2]
+        self.result = tup[3]
+        self.test_index = tup[4]
+        self.battery_id = tup[5]
+
+    def __str__(self):
+        return "{} - ID: {}, Name: {}, Battery ID: {}".format(self.__class__.__name__, self.id,
+                                                              self.name, self.battery_id)
+
+    @staticmethod
+    def get_all(conn) -> ['Test']:
+        return get_all_db_objects(conn, Test, Test.table_name)
+
+    @staticmethod
+    def get_by_id(conn, test_id) -> 'Test':
+        return get_db_object_by_primary_id(conn, Test, Test.table_name, test_id)
+
+    @staticmethod
+    def get_by_battery_id(conn, battery_id) -> ['Test']:
+        return get_db_objects_by_foreign_id(conn, Test, Test.table_name,
+                                            battery_id, Test.foreign_id_column)
+
+
+class Variant(object):
+    table_name = "variants"
+    foreign_id_column = "test_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, Variant.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.variant_index = tup[1]
+        self.test_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Index: {}, Test ID: {}".format(self.__class__.__name__, self.id,
+                                                            self.variant_index, self.test_id)
+
+    @staticmethod
+    def get_all(conn) -> ['Variant']:
+        return get_all_db_objects(conn, Variant, Variant.table_name)
+
+    @staticmethod
+    def get_by_id(conn, variant_id) -> 'Variant':
+        return get_db_object_by_primary_id(conn, Variant, Variant.table_name, variant_id)
+
+    @staticmethod
+    def get_by_test_id(conn, test_id) -> ['Variant']:
+        return get_db_objects_by_foreign_id(conn, Variant, Variant.table_name,
+                                            test_id, Variant.foreign_id_column)
+
+
+class VariantError(object):
+    table_name = "variant_errors"
+    foreign_id_column = "variant_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, VariantError.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.message = tup[1]
+        self.variant_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Message: {}, Variant ID: {}".format(self.__class__.__name__, self.id,
+                                                                 self.message, self.variant_id)
+
+    @staticmethod
+    def get_all(conn) -> ['VariantError']:
+        return get_all_db_objects(conn, VariantError, VariantError.table_name)
+
+    @staticmethod
+    def get_by_id(conn, error_message_id) -> 'VariantError':
+        return get_db_object_by_primary_id(conn, VariantError, VariantError.table_name,
+                                           error_message_id)
+
+    @staticmethod
+    def get_by_variant_id(conn, variant_id) -> ['VariantError']:
+        return get_db_objects_by_foreign_id(conn, VariantError, VariantError.table_name,
+                                            variant_id, VariantError.foreign_id_column)
+
+
+class VariantWarning(object):
+    table_name = "variant_warnings"
+    foreign_id_column = "variant_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, VariantWarning.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.message = tup[1]
+        self.variant_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Message: {}, Variant ID: {}".format(self.__class__.__name__, self.id,
+                                                                 self.message, self.variant_id)
+
+    @staticmethod
+    def get_all(conn) -> ['VariantWarning']:
+        return get_all_db_objects(conn, VariantWarning, VariantWarning.table_name)
+
+    @staticmethod
+    def get_by_id(conn, warning_message_id) -> 'VariantWarning':
+        return get_db_object_by_primary_id(conn, VariantWarning, VariantWarning.table_name,
+                                           warning_message_id)
+
+    @staticmethod
+    def get_by_variant_id(conn, variant_id) -> ['VariantWarning']:
+        return get_db_objects_by_foreign_id(conn, VariantWarning, VariantWarning.table_name,
+                                            variant_id, VariantWarning.foreign_id_column)
+
+
+class VariantStdErr(object):
+    table_name = "variant_stderr"
+    foreign_id_column = "variant_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, VariantStdErr.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.message = tup[1]
+        self.variant_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Message: {}, Variant ID: {}".format(self.__class__.__name__, self.id,
+                                                                 self.message, self.variant_id)
+
+    @staticmethod
+    def get_all(conn) -> ['VariantStdErr']:
+        return get_all_db_objects(conn, VariantStdErr, VariantStdErr.table_name)
+
+    @staticmethod
+    def get_by_id(conn, stderr_message_id) -> 'VariantStdErr':
+        return get_db_object_by_primary_id(conn, VariantStdErr, VariantStdErr.table_name,
+                                           stderr_message_id)
+
+    @staticmethod
+    def get_by_variant_id(conn, variant_id) -> ['VariantStdErr']:
+        return get_db_objects_by_foreign_id(conn, VariantStdErr, VariantStdErr.table_name,
+                                            variant_id, VariantStdErr.foreign_id_column)
+
+
+class UserSetting(object):
+    table_name = "user_settings"
+    foreign_id_column = "variant_id"
+    expected_tuple_els = 4
+
+    def __init__(self, tup):
+        check_init_tuple(tup, UserSetting.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.name = tup[1]
+        self.value = tup[2]
+        self.variant_id = tup[3]
+
+    def __str__(self):
+        return "{} - ID: {}, Name: {}, Value: {}, Variant ID: {}".format(self.__class__.__name__,
+                                                                         self.id, self.name, self.value,
+                                                                         self.variant_id)
+
+    @staticmethod
+    def get_all(conn) -> ['UserSetting']:
+        return get_all_db_objects(conn, UserSetting, UserSetting.table_name)
+
+    @staticmethod
+    def get_by_id(conn, user_setting_id) -> 'UserSetting':
+        return get_db_object_by_primary_id(conn, UserSetting, UserSetting.table_name,
+                                           user_setting_id)
+
+    @staticmethod
+    def get_by_variant_id(conn, variant_id) -> ['UserSetting']:
+        return get_db_objects_by_foreign_id(conn, UserSetting, UserSetting.table_name,
+                                            variant_id, UserSetting.foreign_id_column)
+
+
+class Subtest(object):
+    table_name = "subtests"
+    foreign_id_column = "variant_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, Subtest.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.subtest_index = tup[1]
+        self.variant_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Index: {}, Variant ID: {}".format(self.__class__.__name__, self.id,
+                                                               self.subtest_index, self.variant_id)
+
+    @staticmethod
+    def get_all(conn) -> ['Subtest']:
+        return get_all_db_objects(conn, Subtest, Subtest.table_name)
+
+    @staticmethod
+    def get_by_id(conn, subtest_id) -> 'Subtest':
+        return get_db_object_by_primary_id(conn, Subtest, Subtest.table_name, subtest_id)
+
+    @staticmethod
+    def get_by_variant_id(conn, variant_id) -> ['Subtest']:
+        return get_db_objects_by_foreign_id(conn, Subtest, Subtest.table_name,
+                                            variant_id, Subtest.foreign_id_column)
+
+
+class Statistic(object):
+    table_name = "statistics"
+    foreign_id_column = "subtest_id"
+    expected_tuple_els = 5
+
+    def __init__(self, tup):
+        check_init_tuple(tup, Statistic.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.name = tup[1]
+        self.value = tup[2]
+        self.result = tup[3]
+        self.subtest_id = tup[4]
+
+    def __str__(self):
+        return "{} - ID: {}, Name: {}, Value: {}, Subtest ID: {}".format(self.__class__.__name__,
+                                                                         self.id, self.name, self.value,
+                                                                         self.subtest_id)
+
+    @staticmethod
+    def get_all(conn) -> ['Statistic']:
+        return get_all_db_objects(conn, Statistic, Statistic.table_name)
+
+    @staticmethod
+    def get_by_id(conn, statistic_id) -> 'Statistic':
+        return get_db_object_by_primary_id(conn, Statistic, Statistic.table_name, statistic_id)
+
+    @staticmethod
+    def get_by_subtest_id(conn, subtest_id) -> ['Statistic']:
+        return get_db_objects_by_foreign_id(conn, Statistic, Statistic.table_name,
+                                            subtest_id, Statistic.foreign_id_column)
+
+
+class TestParameter(object):
+    table_name = "test_parameters"
+    foreign_id_column = "subtest_id"
+    expected_tuple_els = 4
+
+    def __init__(self, tup):
+        check_init_tuple(tup, TestParameter.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.name = tup[1]
+        self.value = tup[2]
+        self.subtest_id = tup[3]
+
+    def __str__(self):
+        return "{} - ID: {}, Name: {}, Value: {}, Subtest ID: {}".format(self.__class__.__name__,
+                                                                         self.id, self.name, self.value,
+                                                                         self.subtest_id)
+
+    @staticmethod
+    def get_all(conn) -> ['TestParameter']:
+        return get_all_db_objects(conn, TestParameter, TestParameter.table_name)
+
+    @staticmethod
+    def get_by_id(conn, test_parameter_id) -> 'TestParameter':
+        return get_db_object_by_primary_id(conn, TestParameter, TestParameter.table_name,
+                                           test_parameter_id)
+
+    @staticmethod
+    def get_by_subtest_id(conn, subtest_id) -> ['TestParameter']:
+        return get_db_objects_by_foreign_id(conn, TestParameter, TestParameter.table_name,
+                                            subtest_id, TestParameter.foreign_id_column)
+
+
+class PValue(object):
+    table_name = "p_values"
+    foreign_id_column = "subtest_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, PValue.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.value = tup[1]
+        self.subtest_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Value: {}, Subtest ID: {}".format(self.__class__.__name__,
+                                                               self.id, self.value, self.subtest_id)
+
+    @staticmethod
+    def get_all(conn) -> ['PValue']:
+        return get_all_db_objects(conn, PValue, PValue.table_name)
+
+    @staticmethod
+    def get_by_id(conn, p_value_id) -> 'PValue':
+        return get_db_object_by_primary_id(conn, PValue, PValue.table_name, p_value_id)
+
+    @staticmethod
+    def get_by_subtest_id(conn, subtest_id) -> ['PValue']:
+        return get_db_objects_by_foreign_id(conn, PValue, PValue.table_name,
+                                            subtest_id, PValue.foreign_id_column)
+
+
+def check_init_tuple(tup, expected_tuple_els, obj_name):
+    if len(tup) != expected_tuple_els:
+        raise ValueError("tuple for initializing {} must have {} but has {}"
+                         .format(obj_name, expected_tuple_els, len(tup)))
+
+
+def map_db_rows_to_objects(rows, db_obj):
+    rval = []
+    for row in rows:
+        rval.append(db_obj(row))
+        
+    return rval
+
+
+def get_all_db_objects(conn, db_obj, table_name):
+    with conn.cursor() as c:
+        c.execute("SELECT * FROM {}".format(table_name))
+        rval = map_db_rows_to_objects(c.fetchall(), db_obj)
+        return rval
+
+
+def get_db_object_by_primary_id(conn, db_obj, table_name, primary_id, primary_id_column="id"):
+    with conn.cursor() as c:
+        c.execute("SELECT * FROM {} WHERE {}=%s".format(table_name, primary_id_column), [primary_id])
+        if c.rowcount > 1:
+            raise LookupError("multiple rows with id={} in table {}"
+                              .format(primary_id, table_name))
+        if c.rowcount == 0:
+            return None
+        rval = map_db_rows_to_objects(c.fetchall(), db_obj)
+        return rval[0]
+
+
+def get_db_objects_by_foreign_id(conn, db_obj, table_name, foreign_id, foreign_id_column):
+    with conn.cursor() as c:
+        c.execute("SELECT * FROM {} WHERE {}=%s".format(table_name, foreign_id_column), [foreign_id])
+        rval = map_db_rows_to_objects(c.fetchall(), db_obj)
+        c.close()
+        return rval

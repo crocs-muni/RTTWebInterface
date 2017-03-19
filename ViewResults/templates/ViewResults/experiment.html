@@ -1,0 +1,65 @@
+<a href="{% url 'ViewResults:index' %}"><- Back to experiments</a>
+<hr/>
+<h2>Detail of experiment</h2>
+<hr/>
+
+<table class="table">
+    <tr>
+        <th>ID</th>
+        <td>{{ exp.id }}</td>
+    </tr>
+    <tr>
+        <th>Name</th>
+        <td>{{ exp.name }}</td>
+    </tr>
+    <tr>
+        <th>Author e-mail</th>
+        <td>{{ exp.author_email }}</td>
+    </tr>
+    <tr>
+        <th>Time of creation</th>
+        <td>{{ exp.created|date:'H:i, j M, Y' }}</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>{{ exp.status }}</td>
+    </tr>
+    <tr>
+        <th>Configuration file</th>
+        <td>{{ exp.config_file }}</td>
+    </tr>
+    <tr>
+        <th>Data file</th>
+        <td>{{ exp.data_file }}</td>
+    </tr>
+    <tr>
+        <th>Hash of data (SHA-256)</th>
+        <td>{{ exp.data_file_sha256 }}</td>
+    </tr>
+</table>
+
+<h2>Analysis done on data by statistical batteries</h2>
+<hr/>
+
+{% if battery_list %}
+    <table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Passed tests</th>
+        <th>Total tests</th>
+        <th></th>
+    </tr>
+
+    {% for b in battery_list %}
+        <tr>
+            <td>{{ b.name }}</td>
+            <td>{{ b.passed_tests }}</td>
+            <td>{{ b.total_tests }}</td>
+            <td><a href="{% url 'ViewResults:battery' b.id %}">Detail</a></td>
+        </tr>
+    {% endfor %}
+
+    </table>
+{% else %}
+    <p>No batteries were yet finished.</p>
+{% endif %}

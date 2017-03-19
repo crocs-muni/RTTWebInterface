@@ -1,0 +1,70 @@
+
+<h2>Subtests</h2>
+{% if subtest_list %}
+    {% if subtest_list|length == 1 %}
+        <hr/>
+        {% include 'ViewResults/subtest_detail.html' %}
+        <hr/>
+    {% else %}
+        <table class="table">
+            <tr>
+                <th>#</th>
+                <th>Statistics</th>
+                <th>P-Values</th>
+                <th></th>
+            </tr>
+            {% for s in subtest_list %}
+                <tr>
+                    <td>{{ s.subtest_index }}</td>
+                    <td>{{ s.stat_count }}</td>
+                    <td>{{ s.p_val_count }}</td>
+                    <td><a href="{% url 'ViewResults:subtest' s.id %}">Detail</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% else %}
+    <p>No subtests.</p>
+{% endif %}
+
+<h2>Warning messages</h2>
+{% if variant_warning_list %}
+    <table class="table">
+        {% for w in variant_warning_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ w.message }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No warnings.</p>
+{% endif %}
+
+<h2>Error messages</h2>
+{% if variant_error_list %}
+    <table class="table">
+        {% for e in variant_error_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ e.message }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No errors.</p>
+{% endif %}
+
+<h2>Standard error output</h2>
+{% if variant_stderr_list %}
+    <table class="table">
+        {% for s in variant_stderr_list %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ s.message }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No standard error output.</p>
+{% endif %}

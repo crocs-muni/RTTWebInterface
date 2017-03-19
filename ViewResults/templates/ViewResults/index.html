@@ -1,0 +1,28 @@
+<h2>Experiments</h2>
+<hr/>
+
+{% if experiment_list %}
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Created</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+
+        {% for e in experiment_list %}
+            <tr>
+                <td>{{ e.id }}</td>
+                <td>{{ e.name }}</td>
+                <td>{{ e.created|date:'H:i, j M, Y' }}</td>
+                <td>{{ e.status }}</td>
+                <td>
+                    <a href="{% url 'ViewResults:experiment' e.id %}">Detail</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No experiments available.</p>
+{% endif %}

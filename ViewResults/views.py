@@ -1,0 +1,141 @@
+from django.http import Http404
+from django.shortcuts import render
+from django.db import connections
+from .rtt_db_objects import *
+
+
+# Create your views here.
+def index(request):
+    c = connections['rtt-database']
+    experiment_list = \
+        Experiment.get_all(c)
+
+    ctx = {
+        'experiment_list': experiment_list
+    }
+    return render(request, 'ViewResults/index.html', ctx)
+
+
+def experiment(request, experiment_id):
+    c = connections['rtt-database']
+    exp = Experiment.get_by_id(c, experiment_id)
+    if not exp:
+        raise Http404("No such experiment")
+
+    ctx = {
+        'exp': exp,
+        'battery_list': Battery.get_by_experiment_id(c, exp.id)
+    }
+    return render(request, 'ViewResults/experiment.html', ctx)
+
+
+def battery(request, battery_id):
+    c = connections['rtt-database']
+    batt = Battery.get_by_id(c, battery_id)
+    if not batt:
+        raise Http404("No such battery.")
+
+    test_list = Test.get_by_battery_id(c, battery_id)
+    for t in test_list:
+        t.variant_count = len(Variant.get_by_test_id(c, t.id))
+
+    ctx = {
+        'batt': batt,
+        'experiment_name': Experiment.get_by_id(c, batt.experiment_id).name,
+        'test_list': test_list,
+        'battery_error_list': BatteryError.get_by_battery_id(c, battery_id),
+        'battery_warning_list': BatteryWarning.get_by_battery_id(c, battery_id)
+    }
+    return render(request, 'ViewResults/battery.html', ctx)
+
+
+def test(request, test_id):
+    c = connections['rtt-database']
+    tst = Test.get_by_id(c, test_id)
+    if not tst:
+        raise Http404("No such test.")
+
+    variant_list = Variant.get_by_test_id(c, test_id)
+    ctx = {
+        'tst': tst,
+        'battery_name': Battery.get_by_id(c, tst.battery_id).name,
+        'variant_list': variant_list
+    }
+
+    if len(variant_list) == 1:
+        var = variant_list[0]
+        subtest_list = Subtest.get_by_variant_id(c, var.id)
+        ctx['subtest_list'] = subtest_list
+        ctx['variant_warning_list'] = VariantWarning.get_by_variant_id(c, var.id)
+        ctx['variant_error_list'] = VariantError.get_by_variant_id(c, var.id)
+        ctx['variant_stderr_list'] = VariantStdErr.get_by_variant_id(c, var.id)
+
+        if len(subtest_list) == 1:
+            sub = subtest_list[0]
+            ctx['test_parameter_list'] = TestParameter.get_by_subtest_id(c, sub.id)
+            ctx['statistic_list'] = Statistic.get_by_subtest_id(c, sub.id)
+            ctx['p_value_list'] = PValue.get_by_subtest_id(c, sub.id)
+
+        else:
+            for s in subtest_list:
+                s.p_val_count = len(PValue.get_by_subtest_id(c, s.id))
+                s.stat_count = len(Statistic.get_by_subtest_id(c, s.id))
+
+    else:
+        for v in variant_list:
+            v.subtest_count = len(Subtest.get_by_variant_id(c, v.id))
+            v.warning_count = len(VariantWarning.get_by_variant_id(c, v.id))
+            v.error_count = len(VariantError.get_by_variant_id(c, v.id))
+            v.stderr_count = len(VariantStdErr.get_by_variant_id(c, v.id))
+
+    return render(request, 'ViewResults/test.html', ctx)
+
+
+def variant(request, variant_id):
+    c = connections['rtt-database']
+    var = Variant.get_by_id(c, variant_id)
+    if not var:
+        raise Http404("No such variant.")
+
+    subtest_list = Subtest.get_by_variant_id(c, variant_id)
+    ctx = {
+        'var': var,
+        'test_name': Test.get_by_id(c, var.test_id).name,
+        'variant_error_list': VariantError.get_by_variant_id(c, variant_id),
+        'variant_warning_list': VariantWarning.get_by_variant_id(c, variant_id),
+        'variant_stderr_list': VariantStdErr.get_by_variant_id(c, variant_id),
+        'user_setting_list': UserSetting.get_by_variant_id(c, variant_id),
+        'subtest_list': subtest_list
+    }
+
+    if len(subtest_list) == 1:
+        sub = subtest_list[0]
+        ctx['test_parameter_list'] = TestParameter.get_by_subtest_id(c, sub.id)
+        ctx['statistic_list'] = Statistic.get_by_subtest_id(c, sub.id)
+        ctx['p_value_list'] = PValue.get_by_subtest_id(c, sub.id)
+
+    else:
+        for s in subtest_list:
+            s.p_val_count = len(PValue.get_by_subtest_id(c, s.id))
+            s.stat_count = len(Statistic.get_by_subtest_id(c, s.id))
+
+    return render(request, 'ViewResults/variant.html', ctx)
+
+
+def subtest(request, subtest_id):
+    c = connections['rtt-database']
+    sub = Subtest.get_by_id(c, subtest_id)
+    if not sub:
+        raise Http404("No such subtest.")
+
+    var = Variant.get_by_id(c, sub.variant_id)
+
+    ctx = {
+        'sub': sub,
+        'var_idx': var.variant_index,
+        'test_name': Test.get_by_id(c, var.test_id).name,
+        'test_parameter_list': TestParameter.get_by_subtest_id(c, subtest_id),
+        'statistic_list': Statistic.get_by_subtest_id(c, subtest_id),
+        'p_value_list': PValue.get_by_subtest_id(c, subtest_id)
+    }
+    return render(request, 'ViewResults/subtest.html', ctx)

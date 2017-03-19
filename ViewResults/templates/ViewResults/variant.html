@@ -1,0 +1,49 @@
+<a href="{% url 'ViewResults:test' var.test_id %}"><- Back to test {{ var.test_id }}</a>
+
+<h2>Details of variant of test</h2>
+<table class="table">
+    <tr>
+        <th>ID</th>
+        <td>{{ var.id }}</td>
+    </tr>
+    <tr>
+        <th>Index of variant</th>
+        <td>{{ var.variant_index }}</td>
+    </tr>
+    <tr>
+        <th>Subtest count</th>
+        <td>{{ subtest_list|length }}</td>
+    </tr>
+    <tr>
+        <th>Warning count</th>
+        <td>{{ warning_message_list|length }}</td>
+    </tr>
+    <tr>
+        <th>Error count</th>
+        <td>{{ error_message_list|length }}</td>
+    </tr>
+    <tr>
+        <th>Standard error output count</th>
+        <td>{{ stderr_message_list|length }}</td>
+    </tr>
+    <tr>
+        <th>Name of the test</th>
+        <td>{{ test_name }}</td>
+    </tr>
+</table>
+
+<h2>User settings</h2>
+{% if user_setting_list %}
+    <table class="table">
+        {% for u in user_setting_list %}
+            <tr>
+                <th>{{ u.name }}</th>
+                <td>{{ u.value }}</td>
+                </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <p>No user settings.</p>
+{% endif %}
+
+{% include 'ViewResults/variant_detail.html' %}

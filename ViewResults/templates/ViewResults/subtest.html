@@ -1,0 +1,19 @@
+<a href="{% url 'ViewResults:variant' sub.variant_id %}"><- Back to variant {{ sub.variant_id }}</a>
+
+<h2>Details of subtest of test</h2>
+<table class="table">
+    <tr>
+        <th>ID</th>
+        <td>{{ sub.id }}</td>
+    </tr>
+    <tr>
+        <th>Subtest index</th>
+        <td>{{ sub.subtest_index }}</td>
+    </tr>
+    <tr>
+        <th>Test name</th>
+        <td>{{ test_name }}</td>
+    </tr>
+</table>
+
+{% include 'ViewResults/subtest_detail.html' %}
