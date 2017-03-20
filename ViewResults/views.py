@@ -10,6 +10,7 @@ def index(request):
     experiment_list = \
         Experiment.get_all(c)
 
+    experiment_list.sort(key=lambda x: x.id, reverse=True)
     ctx = {
         'experiment_list': experiment_list
     }

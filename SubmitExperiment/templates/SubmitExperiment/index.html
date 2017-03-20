@@ -1,3 +1,102 @@
 <body>
-Submit your experiments here.
+<h2>Submit your experiments here.</h2>
+
+{% if error %}
+    <b>ERROR: {{ error }}</b>
+    <hr />
+{% endif %}
+
+{% if message %}
+    <b>INFO: {{ message }}</b>
+    <hr />
+{% endif %}
+
+<form action="{% url 'SubmitExperiment:submit' %}" method="post">
+    {% csrf_token%}
+    <h3>General settings</h3>
+    <table>
+        <tr>
+            <td><label for="exp_name">Experiment name</label></td>
+            <td><input type="text" name="exp_name" id="exp_name"/></td>
+        </tr>
+        <tr>
+            <td><label for="email">Receive notification</label></td>
+            <td><input type="text" name="email" id="email"/></td>
+        </tr>
+        <tr>
+            <td><label for="in_file">Input file</label></td>
+            <td><input type="file" name="in_file" id="in_file"/></td>
+        </tr>
+    </table>
+
+    <h3>Configuration settings</h3>
+    <table>
+        <tr>
+            <td><label for="def_cfg">Use default configuration</label></td>
+            <td><input type="checkbox" name="def_cfg" id="def_cfg"/></td>
+        </tr>
+        <tr>
+            <td><label for="chosen_cfg">Choose configuration</label></td>
+            <td>
+                <select name="chosen_cfg" id="chosen_cfg">
+                    <option value="nist_sts">1MB</option>
+                    <option value="dieharder">10MB</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="own_cfg">Provide own configuration file</label></td>
+            <td><input type="checkbox" name="own_cfg" id="own_cfg"/></td>
+        </tr>
+        <tr>
+            <td><label for="own_cfg_file">Configuration file</label></td>
+            <td><input type="file" name="own_cfg_file" id="own_cfg_file"/></td>
+        </tr>
+    </table>
+
+
+    <h3>Battery application settings</h3>
+    <table>
+        <tr>
+            <td><label for="batt_all">All batteries (except TestU01 Big Crush)</label></td>
+            <td><input type="checkbox" name="batt_all" id="batt_all"></td>
+        </tr>
+        <tr>
+            <td><label for="batt_sts">NIST Statistical Test Suite</label></td>
+            <td><input type="checkbox" name="batt_sts" id="batt_sts"></td>
+        </tr>
+        <tr>
+            <td><label for="batt_die">DIEHARDER</label></td>
+            <td><input type="checkbox" name="batt_die" id="batt_die"></td>
+        </tr>
+        <tr>
+            <td><label for="batt_tu01_sc">TestU01 Small Crush</label></td>
+            <td><input type="checkbox" name="batt_tu01_sc" id="batt_tu01_sc"></td>
+        </tr>
+        <tr>
+            <td><label for="batt_tu01_c">TestU01 Crush</label></td>
+            <td><input type="checkbox" name="batt_tu01_c" id="batt_tu01_c"></td>
+        </tr>
+        <tr>
+            <td><label for="batt_tu01_bc">TestU01 Big Crush</label></td>
+            <td><input type="checkbox" name="batt_tu01_bc" id="batt_tu01_bc"></td>
+        </tr>
+        <tr>
+            <td><label for="batt_tu01_rab">TestU01 Rabbit</label></td>
+            <td><input type="checkbox" name="batt_tu01_rab" id="batt_tu01_rab"></td>
+        </tr>
+        <tr>
+            <td><label for="batt_tu01_ab">TestU01 Alphabit</label></td>
+            <td><input type="checkbox" name="batt_tu01_ab" id="batt_tu01_ab"></td>
+        </tr>
+        <tr>
+            <td><label for="batt_tu01_bab">TestU01 Block Alphabit</label></td>
+            <td><input type="checkbox" name="batt_tu01_bab" id="batt_tu01_bab"></td>
+        </tr>
+    </table>
+    <hr/>
+    <br/>
+    <input type="submit" id="submit" value="Submit">
+</form>
+
 </body>
