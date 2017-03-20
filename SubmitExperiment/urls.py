@@ -5,6 +5,5 @@ from . import views
 app_name = 'SubmitExperiment'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^print_stuff/$', views.print_stuff, name='print_stuff'),
-    url(r'^submit/$', views.submit, name='submit'),
+    url(r'^Submit/$', views.submit, name='submit'),
 ]

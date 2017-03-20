@@ -1,102 +1,137 @@
 <body>
 <h2>Submit your experiments here.</h2>
+<hr/>
 
-{% if error %}
-    <b>ERROR: {{ error }}</b>
+{% if errors %}
+    {% for e in errors %}
+        <b>ERROR: {{ e }}</b>
+    {% endfor %}
     <hr />
 {% endif %}
 
-{% if message %}
-    <b>INFO: {{ message }}</b>
+{% if messages %}
+    {% for m in messages %}
+        <b>INFO: {{ m }}</b>
+    {% endfor %}
     <hr />
 {% endif %}
 
-<form action="{% url 'SubmitExperiment:submit' %}" method="post">
+<form action="{% url 'SubmitExperiment:submit' %}" method="post" enctype="multipart/form-data">
     {% csrf_token%}
+    {{ form.non_field_errors }}
     <h3>General settings</h3>
     <table>
         <tr>
-            <td><label for="exp_name">Experiment name</label></td>
-            <td><input type="text" name="exp_name" id="exp_name"/></td>
+            {{ form.exp_name.errors }}
+            <td>{{ form.exp_name.label_tag }}</td>
+            <td>{{ form.exp_name }}</td>
         </tr>
         <tr>
-            <td><label for="email">Receive notification</label></td>
-            <td><input type="text" name="email" id="email"/></td>
+            {{ form.email.errors }}
+            <td>{{ form.email.label_tag }}</td>
+            <td>{{ form.email }}</td>
         </tr>
         <tr>
-            <td><label for="in_file">Input file</label></td>
-            <td><input type="file" name="in_file" id="in_file"/></td>
+            {{ form.in_file.errors }}
+            <td>{{ form.in_file.label_tag }}</td>
+            <td>{{ form.in_file }}</td>
         </tr>
     </table>
 
     <h3>Configuration settings</h3>
     <table>
         <tr>
-            <td><label for="def_cfg">Use default configuration</label></td>
-            <td><input type="checkbox" name="def_cfg" id="def_cfg"/></td>
+            {{ form.default_cfg.errors }}
+            <td>{{ form.default_cfg.label_tag }}</td>
+            <td>{{ form.default_cfg }}</td>
         </tr>
         <tr>
-            <td><label for="chosen_cfg">Choose configuration</label></td>
-            <td>
-                <select name="chosen_cfg" id="chosen_cfg">
-                    <option value="nist_sts">1MB</option>
-                    <option value="dieharder">10MB</option>
-                </select>
-            </td>
+            {{ form.choose_cfg.errors }}
+            <td>{{ form.choose_cfg.label_tag }}</td>
+            <td>{{ form.choose_cfg }}</td>
         </tr>
         <tr>
-            <td><label for="own_cfg">Provide own configuration file</label></td>
-            <td><input type="checkbox" name="own_cfg" id="own_cfg"/></td>
-        </tr>
-        <tr>
-            <td><label for="own_cfg_file">Configuration file</label></td>
-            <td><input type="file" name="own_cfg_file" id="own_cfg_file"/></td>
+            {{ form.own_cfg.errors }}
+            <td>{{ form.own_cfg.label_tag }}</td>
+            <td>{{ form.own_cfg }}</td>
         </tr>
     </table>
-
 
     <h3>Battery application settings</h3>
     <table>
         <tr>
-            <td><label for="batt_all">All batteries (except TestU01 Big Crush)</label></td>
-            <td><input type="checkbox" name="batt_all" id="batt_all"></td>
+            <td><label for="batt_all">Switch all (except TestU01 Big Crush)</label></td>
+            <td><input type="checkbox" name="batt_all" id="batt_all" onclick="switchBatteries();"></td>
         </tr>
         <tr>
-            <td><label for="batt_sts">NIST Statistical Test Suite</label></td>
-            <td><input type="checkbox" name="batt_sts" id="batt_sts"></td>
+            {{ form.batt_sts.errors }}
+            <td>{{ form.batt_sts.label_tag }}</td>
+            <td>{{ form.batt_sts }}</td>
         </tr>
         <tr>
-            <td><label for="batt_die">DIEHARDER</label></td>
-            <td><input type="checkbox" name="batt_die" id="batt_die"></td>
+            {{ form.batt_die.errors }}
+            <td>{{ form.batt_die.label_tag }}</td>
+            <td>{{ form.batt_die }}</td>
         </tr>
         <tr>
-            <td><label for="batt_tu01_sc">TestU01 Small Crush</label></td>
-            <td><input type="checkbox" name="batt_tu01_sc" id="batt_tu01_sc"></td>
+            {{ form.batt_tu_sc.errors }}
+            <td>{{ form.batt_tu_sc.label_tag }}</td>
+            <td>{{ form.batt_tu_sc }}</td>
         </tr>
         <tr>
-            <td><label for="batt_tu01_c">TestU01 Crush</label></td>
-            <td><input type="checkbox" name="batt_tu01_c" id="batt_tu01_c"></td>
+            {{ form.batt_tu_c.errors }}
+            <td>{{ form.batt_tu_c.label_tag }}</td>
+            <td>{{ form.batt_tu_c }}</td>
         </tr>
         <tr>
-            <td><label for="batt_tu01_bc">TestU01 Big Crush</label></td>
-            <td><input type="checkbox" name="batt_tu01_bc" id="batt_tu01_bc"></td>
+            {{ form.batt_tu_bc.errors }}
+            <td>{{ form.batt_tu_bc.label_tag }}</td>
+            <td>{{ form.batt_tu_bc }}</td>
         </tr>
         <tr>
-            <td><label for="batt_tu01_rab">TestU01 Rabbit</label></td>
-            <td><input type="checkbox" name="batt_tu01_rab" id="batt_tu01_rab"></td>
+            {{ form.batt_tu_rab.errors }}
+            <td>{{ form.batt_tu_rab.label_tag }}</td>
+            <td>{{ form.batt_tu_rab }}</td>
         </tr>
         <tr>
-            <td><label for="batt_tu01_ab">TestU01 Alphabit</label></td>
-            <td><input type="checkbox" name="batt_tu01_ab" id="batt_tu01_ab"></td>
+            {{ form.batt_tu_ab.errors }}
+            <td>{{ form.batt_tu_ab.label_tag }}</td>
+            <td>{{ form.batt_tu_ab }}</td>
         </tr>
         <tr>
-            <td><label for="batt_tu01_bab">TestU01 Block Alphabit</label></td>
-            <td><input type="checkbox" name="batt_tu01_bab" id="batt_tu01_bab"></td>
+            {{ form.batt_tu_bab.errors }}
+            <td>{{ form.batt_tu_bab.label_tag }}</td>
+            <td>{{ form.batt_tu_bab }}</td>
         </tr>
     </table>
+
     <hr/>
     <br/>
-    <input type="submit" id="submit" value="Submit">
+    <input type="submit" value="Submit"/>
 </form>
+
+<script>
+    function confDisable() {
+        var def = document.getElementById('{{ form.default_cfg.id_for_label }}').checked;
+        var sel = (document.getElementById('{{ form.choose_cfg.id_for_label }}').value != 0);
+        var own = (document.getElementById('{{ form.own_cfg.id_for_label }}').value != "");
+        document.getElementById('{{ form.default_cfg.id_for_label }}').disabled = (own || sel);
+        document.getElementById('{{ form.choose_cfg.id_for_label }}').disabled = (def || own);
+        document.getElementById('{{ form.own_cfg.id_for_label }}').disabled = (def || sel);
+    }
+</script>
+
+<script>
+    function switchBatteries() {
+            document.getElementById('{{ form.batt_sts.id_for_label }}').checked ^= true;
+            document.getElementById('{{ form.batt_die.id_for_label }}').checked ^= true;
+            document.getElementById('{{ form.batt_tu_sc.id_for_label }}').checked ^= true;
+            document.getElementById('{{ form.batt_tu_c.id_for_label }}').checked ^= true;
+            //document.getElementById('{{ form.batt_tu_bc.id_for_label }}').checked ^= true;
+            document.getElementById('{{ form.batt_tu_rab.id_for_label }}').checked ^= true;
+            document.getElementById('{{ form.batt_tu_ab.id_for_label }}').checked ^= true;
+            document.getElementById('{{ form.batt_tu_bab.id_for_label }}').checked ^= true;
+    }
+</script>
 
 </body>
