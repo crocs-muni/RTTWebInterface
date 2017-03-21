@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-with open(os.path.join(BASE_DIR, "Credentials/secret_key")) as f:
+with open(os.path.join(BASE_DIR, "credentials/secret_key")) as f:
     SECRET_KEY = f.read().rstrip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -77,13 +77,13 @@ WSGI_APPLICATION = 'RTTWebInterface.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-default_db_cred_file = os.path.join(BASE_DIR, "Credentials/default_db_credentials.ini")
+default_db_cred_file = os.path.join(BASE_DIR, "credentials/default_db_credentials.ini")
 default_db_cred = configparser.ConfigParser()
 default_db_cred.read(default_db_cred_file)
 if len(default_db_cred.sections()) == 0:
     raise FileNotFoundError("can't read credentials: {}".format(default_db_cred_file))
 
-rtt_db_cred_file = os.path.join(BASE_DIR, "Credentials/rtt_db_credentials.ini")
+rtt_db_cred_file = os.path.join(BASE_DIR, "credentials/rtt_db_credentials.ini")
 rtt_db_cred = configparser.ConfigParser()
 rtt_db_cred.read(rtt_db_cred_file)
 if len(rtt_db_cred.sections()) == 0:
@@ -151,3 +151,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# For file uploads
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

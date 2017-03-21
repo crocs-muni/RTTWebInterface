@@ -1,29 +1,26 @@
 from django import forms
 
+from .models import PredefinedConfiguration
 
-CONFIGS = [
-    (0, 'none'),
-    (1, '1MB'),
-    (2, '10MB'),
-    (3, '100MB'),
-    (4, '1000MB'),
-    (5, '8GB-default'),
+CONFIGS = [('', '--- Choose ---')] + [
+    (o.pk, o.name) for o in PredefinedConfiguration.objects.all()
 ]
 
 
-# confDisable
 class ExperimentForm(forms.Form):
     exp_name = forms.CharField(label='Experiment name',
                                max_length=255)
-    in_file = forms.FileField(label='Input file')
+    in_file = forms.FileField(label='Input file for batteries')
     email = forms.EmailField(label='E-Mail for notifications',
                              max_length=255, required=False)
 
-    default_cfg = forms.BooleanField(label='Use default configuration', required=False,
+    default_cfg = forms.BooleanField(label='Use default configuration (recommended)',
+                                     required=False, initial=True,
                                      widget=forms.CheckboxInput(attrs={'onclick': 'confDisable();'}))
-    choose_cfg = forms.ChoiceField(choices=CONFIGS, label='Choose configuration', required=False,
+    choose_cfg = forms.ChoiceField(label='Choose configuration',
+                                   choices=CONFIGS, required=False,
                                    widget=forms.Select(attrs={'onclick': 'confDisable();'}))
-    own_cfg = forms.FileField(label='Configuration file', required=False,
+    own_cfg = forms.FileField(label='Configuration file (advanced user)', required=False,
                               widget=forms.FileInput(attrs={'onchange': 'confDisable();'}))
 
     batt_sts = forms.BooleanField(label='NIST Statistical Testing Suite',
@@ -34,7 +31,7 @@ class ExperimentForm(forms.Form):
                                     required=False)
     batt_tu_c = forms.BooleanField(label='TestU01 Crush',
                                    required=False)
-    batt_tu_bc = forms.BooleanField(label='TestU01 Big Crush',
+    batt_tu_bc = forms.BooleanField(label='TestU01 Big Crush (requires at least 20GB of data, 60GB for full run)',
                                     required=False)
     batt_tu_rab = forms.BooleanField(label='TestU01 Rabbit',
                                      required=False)
@@ -57,13 +54,14 @@ class ExperimentForm(forms.Form):
         tu_ab = cleaned_data.get("batt_tu_ab")
         tu_bab = cleaned_data.get("batt_tu_bab")
 
-        if not default_cfg and False and (choose_cfg is None or choose_cfg == '0') and own_cfg is None:
+        if not default_cfg and choose_cfg == '' and own_cfg is None:
             raise forms.ValidationError("You must either use default configuration or choose prepared "
-                                        "configuration or provide own configuration file.")
+                                        "configuration or provide own configuration file.",
+                                        code='invalid')
 
         if not sts and not die and not tu_sc and not tu_c and \
                 not tu_bc and not tu_rab and not tu_ab and not tu_bab:
-            raise forms.ValidationError("No batteries were set for execution.")
+            raise forms.ValidationError("No batteries were set for execution.",
+                                        code='invalid')
 
         return cleaned_data
-

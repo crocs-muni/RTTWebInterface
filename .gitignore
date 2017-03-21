@@ -1,6 +1,8 @@
 # Project files
 .idea/
-Credentials/
+credentials/
+media/
+submit_binary/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
