@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+
 from .forms import ExperimentForm
 from .models import PredefinedConfiguration
+from .models import AccessCode
+
 import subprocess
 import shlex
 import os
@@ -49,13 +52,39 @@ def submit_experiment(form, in_file_path, cfg_file_path):
 
 
 # Create your views here.
-def index(request):
+def index(request, access_code=None):
+    # Checks whether we allow user to submit experiments
     if not request.user.is_authenticated:
-        return render(request, 'login_error.html')
+        # User is not logged in. But maybe he gave us access code?
+        if access_code is not None:
+            # Yup, he did. Let's check it.
+            try:
+                # Is the code even in the database?
+                ac = AccessCode.objects.get(access_code=access_code)
+                # Hmm, yes it is. But is it still valid?
+                if not ac.is_valid():
+                    # No it is not. Get out.
+                    return render(request, 'SubmitExperiment/access_code_expired.html')
+                #
+                # If the user gets here we can let him in.
+                #
+            except AccessCode.DoesNotExist:
+                # Wrong code, sorry buddy.
+                return render(request, 'SubmitExperiment/access_code_bad.html')
+        else:
+            # Nope, he did not. So kick him out, he has no business here.
+            return render(request, 'login_error.html')
 
+    # Finally process the request
     if request.method != 'POST':
-        return render(request, 'SubmitExperiment/index.html', {'form': ExperimentForm()})
+        # Render the form
+        ctx = {
+            'access_code': access_code,
+            'form': ExperimentForm()
+        }
+        return render(request, 'SubmitExperiment/index.html', ctx)
     else:
+        # Validate form and submit experiment
         form = ExperimentForm(request.POST, request.FILES)
         if form.is_valid():
             messages = []
@@ -109,11 +138,13 @@ def index(request):
 
             ctx = {
                 'messages': messages + ['Experiment was created'],
+                'access_code': access_code,
                 'form': ExperimentForm(),
             }
         else:
             ctx = {
                 'errors': ['Something shitty happened.'],
+                'access_code': access_code,
                 'form': form,
             }
         return render(request, 'SubmitExperiment/index.html', ctx)

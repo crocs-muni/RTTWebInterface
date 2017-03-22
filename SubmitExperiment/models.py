@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
@@ -11,3 +12,14 @@ class PredefinedConfiguration(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class AccessCode(models.Model):
+    access_code = models.CharField(max_length=64, unique=True)
+    valid_until = models.DateTimeField()
+
+    def __str__(self):
+        return "Code valid until {}".format(self.valid_until)
+
+    def is_valid(self):
+        return timezone.now() <= self.valid_until

@@ -16,7 +16,11 @@
     <hr />
 {% endif %}
 
+{% if access_code %}
+<form action="{% url 'SubmitExperiment:index' access_code %}" method="post" enctype="multipart/form-data">
+{% else %}
 <form action="{% url 'SubmitExperiment:index' %}" method="post" enctype="multipart/form-data">
+{% endif %}
     {% csrf_token%}
     {{ form.non_field_errors }}
     <h3>General settings</h3>
