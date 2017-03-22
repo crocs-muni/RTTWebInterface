@@ -58,8 +58,29 @@ def index(request):
             in_file = request.FILES['in_file']
 
             if form.cleaned_data['default_cfg']:
-                raise AssertionError("not implemented yet")
+                # Picking default configuration if possible
+                config_list = PredefinedConfiguration.objects.all().order_by('required_bytes')
+                if len(config_list) == 0:
+                    raise AssertionError('there are no predefined configurations')
+
+                last_leq_id = None
+                for c in config_list:
+                    if in_file.size >= c.required_bytes:
+                        last_leq_id = c.id
+                    else:
+                        break
+
+                if last_leq_id is None:
+                    last_leq_id = config_list[0].id
+                    messages.append("Provided file is too small for all configurations.")
+
+                chosen_cfg = PredefinedConfiguration.objects.get(id=last_leq_id)
+                messages.append("Best possible configuration was chosen and requires {} bytes."
+                                .format(chosen_cfg.required_bytes))
+                cfg_file = chosen_cfg.cfg_file
+
             elif form.cleaned_data['choose_cfg'] is not None:
+                # User picked one of predefined configurations
                 cfg = PredefinedConfiguration.objects.get(id=form.cleaned_data['choose_cfg'].id)
                 cfg_file = cfg.cfg_file
                 if in_file.size < cfg.required_bytes:
@@ -68,14 +89,15 @@ def index(request):
                     messages.append("Recommended file size: {} bytes".format(cfg.required_bytes))
                     messages.append("Size of provided file: {} bytes".format(in_file.size))
             else:
+                # User provided his own configuration
                 cfg_file = request.FILES['own_cfg']
 
-            # raise AssertionError("development")
             fs = FileSystemStorage()
             in_file_path = fs.path(fs.save(in_file.name, in_file))
             cfg_file_path = fs.path(fs.save(cfg_file.name, cfg_file))
 
             try:
+                print()
                 _thread.start_new_thread(submit_experiment,
                                          (form, in_file_path, cfg_file_path))
             except BaseException as e:

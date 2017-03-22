@@ -15,7 +15,7 @@ class ExperimentForm(forms.Form):
     default_cfg = forms.BooleanField(label='Use default configuration (recommended)',
                                      required=False, initial=True,
                                      widget=forms.CheckboxInput(attrs={'onclick': 'confDisable();'}))
-    choose_cfg = forms.ModelChoiceField(queryset=PredefinedConfiguration.objects,
+    choose_cfg = forms.ModelChoiceField(queryset=PredefinedConfiguration.objects.order_by('required_bytes'),
                                         label='Choose configuration', empty_label='----------', required=False,
                                         widget=forms.Select(attrs={'onclick': 'confDisable();'}))
     own_cfg = forms.FileField(label='Configuration file (advanced user)', required=False,
