@@ -54,16 +54,23 @@ def index(request):
     else:
         form = ExperimentForm(request.POST, request.FILES)
         if form.is_valid():
+            messages = []
             in_file = request.FILES['in_file']
 
             if form.cleaned_data['default_cfg']:
-                raise NotImplemented('wait for implementation')
+                raise AssertionError("not implemented yet")
             elif form.cleaned_data['choose_cfg'] is not None:
                 cfg = PredefinedConfiguration.objects.get(id=form.cleaned_data['choose_cfg'].id)
                 cfg_file = cfg.cfg_file
+                if in_file.size < cfg.required_bytes:
+                    messages.append("Warning: Your file is smaller than "
+                                    "recommended file size for chosen configuration.")
+                    messages.append("Recommended file size: {} bytes".format(cfg.required_bytes))
+                    messages.append("Size of provided file: {} bytes".format(in_file.size))
             else:
                 cfg_file = request.FILES['own_cfg']
 
+            # raise AssertionError("development")
             fs = FileSystemStorage()
             in_file_path = fs.path(fs.save(in_file.name, in_file))
             cfg_file_path = fs.path(fs.save(cfg_file.name, cfg_file))
@@ -75,7 +82,7 @@ def index(request):
                 print('wtf: {}'.format(e))
 
             ctx = {
-                'messages': ['Everything is okay'],
+                'messages': messages + ['Experiment was created'],
                 'form': ExperimentForm(),
             }
         else:
