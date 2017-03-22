@@ -2,27 +2,26 @@ from django import forms
 
 from .models import PredefinedConfiguration
 
-CONFIGS = [('', '--- Choose ---')] + [
-    (o.pk, o.name) for o in PredefinedConfiguration.objects.all()
-]
-
 
 class ExperimentForm(forms.Form):
+    # Required fields
     exp_name = forms.CharField(label='Experiment name',
                                max_length=255)
     in_file = forms.FileField(label='Input file for batteries')
     email = forms.EmailField(label='E-Mail for notifications',
                              max_length=255, required=False)
 
+    # Configuration fields
     default_cfg = forms.BooleanField(label='Use default configuration (recommended)',
                                      required=False, initial=True,
                                      widget=forms.CheckboxInput(attrs={'onclick': 'confDisable();'}))
-    choose_cfg = forms.ChoiceField(label='Choose configuration',
-                                   choices=CONFIGS, required=False,
-                                   widget=forms.Select(attrs={'onclick': 'confDisable();'}))
+    choose_cfg = forms.ModelChoiceField(queryset=PredefinedConfiguration.objects,
+                                        label='Choose configuration', empty_label='----------', required=False,
+                                        widget=forms.Select(attrs={'onclick': 'confDisable();'}))
     own_cfg = forms.FileField(label='Configuration file (advanced user)', required=False,
                               widget=forms.FileInput(attrs={'onchange': 'confDisable();'}))
 
+    # Battery fields
     batt_sts = forms.BooleanField(label='NIST Statistical Testing Suite',
                                   required=False)
     batt_die = forms.BooleanField(label='DIEHARDER',
@@ -54,7 +53,7 @@ class ExperimentForm(forms.Form):
         tu_ab = cleaned_data.get("batt_tu_ab")
         tu_bab = cleaned_data.get("batt_tu_bab")
 
-        if not default_cfg and choose_cfg == '' and own_cfg is None:
+        if not default_cfg and choose_cfg is None and own_cfg is None:
             raise forms.ValidationError("You must either use default configuration or choose prepared "
                                         "configuration or provide own configuration file.",
                                         code='invalid')

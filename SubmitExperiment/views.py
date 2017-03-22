@@ -58,8 +58,8 @@ def index(request):
 
             if form.cleaned_data['default_cfg']:
                 raise NotImplemented('wait for implementation')
-            elif form.cleaned_data['choose_cfg'] != '':
-                cfg = PredefinedConfiguration.objects.get(id=form.cleaned_data['choose_cfg'])
+            elif form.cleaned_data['choose_cfg'] is not None:
+                cfg = PredefinedConfiguration.objects.get(id=form.cleaned_data['choose_cfg'].id)
                 cfg_file = cfg.cfg_file
             else:
                 cfg_file = request.FILES['own_cfg']
