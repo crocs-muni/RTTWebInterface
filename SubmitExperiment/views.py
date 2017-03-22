@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from .forms import ExperimentForm
+from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from .forms import ExperimentForm
 from .models import PredefinedConfiguration
 import subprocess
 import shlex
@@ -49,6 +50,9 @@ def submit_experiment(form, in_file_path, cfg_file_path):
 
 # Create your views here.
 def index(request):
+    if not request.user.is_authenticated:
+        return render(request, 'login_error.html')
+
     if request.method != 'POST':
         return render(request, 'SubmitExperiment/index.html', {'form': ExperimentForm()})
     else:
