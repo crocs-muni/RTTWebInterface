@@ -11,10 +11,41 @@ import shlex
 import os
 import _thread
 
-
 # Path to submit_experiment executable relative
 # to root directory of Django project
 SUBMIT_EXPERIMENT_BINARY = 'SubmitExperiment/submit_binary/submit_experiment'
+
+
+# Checks whether user is authenticated. If he is not,
+# access code (if any) is checked. If this function
+# returns anything other than None it is rendered
+# appropriate error page and authentication failed.
+def get_auth_error(request, access_code):
+    # Is user authenticated?
+    if not request.user.is_authenticated:
+        # User is not logged in. But maybe he gave us access code?
+        if access_code is not None:
+            # Yup, he did. Let's check it.
+            try:
+                # Is the code even in the database?
+                ac = AccessCode.objects.get(access_code=access_code)
+                # Hmm, yes it is. But is it still valid?
+                if not ac.is_valid():
+                    # No it is not. Get out.
+                    return render(request, 'SubmitExperiment/access_code_expired.html')
+
+                # Okay, he provided correct code that is still valid, let him in.
+                return None
+
+            except AccessCode.DoesNotExist:
+                # Wrong code, sorry buddy.
+                return render(request, 'SubmitExperiment/access_code_bad.html')
+        else:
+            # Nope, he did not. So kick him out, he has no business here.
+            return render(request, 'login_error.html')
+    else:
+        # User is logged in, everything is okay.
+        return None
 
 
 def submit_experiment(form, in_file_path, cfg_file_path):
@@ -53,27 +84,10 @@ def submit_experiment(form, in_file_path, cfg_file_path):
 
 # Create your views here.
 def index(request, access_code=None):
-    # Checks whether we allow user to submit experiments
-    if not request.user.is_authenticated:
-        # User is not logged in. But maybe he gave us access code?
-        if access_code is not None:
-            # Yup, he did. Let's check it.
-            try:
-                # Is the code even in the database?
-                ac = AccessCode.objects.get(access_code=access_code)
-                # Hmm, yes it is. But is it still valid?
-                if not ac.is_valid():
-                    # No it is not. Get out.
-                    return render(request, 'SubmitExperiment/access_code_expired.html')
-                #
-                # If the user gets here we can let him in.
-                #
-            except AccessCode.DoesNotExist:
-                # Wrong code, sorry buddy.
-                return render(request, 'SubmitExperiment/access_code_bad.html')
-        else:
-            # Nope, he did not. So kick him out, he has no business here.
-            return render(request, 'login_error.html')
+    # Authentication
+    auth_error = get_auth_error(request, access_code)
+    if auth_error is not None:
+        return auth_error
 
     # Finally process the request
     if request.method != 'POST':
