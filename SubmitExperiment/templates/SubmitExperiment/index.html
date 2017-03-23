@@ -1,8 +1,6 @@
+{% extends 'base_layout.html' %}
 
-
-<body>
-<h2>Submit experiment</h2>
-<hr/>
+{% block content %}
 
 {% if errors %}
     {% for e in errors %}
@@ -18,14 +16,9 @@
     <hr />
 {% endif %}
 
-{% if access_code %}
-<form action="{% url 'SubmitExperiment:index' access_code %}" method="post" enctype="multipart/form-data">
-{% else %}
-<form action="{% url 'SubmitExperiment:index' %}" method="post" enctype="multipart/form-data">
-{% endif %}
+<form method="post" enctype="multipart/form-data" action="{% if access_code %}{% url 'SubmitExperiment:index' access_code %}{% else %}{% url 'SubmitExperiment:index' %}{% endif %}">
     {% csrf_token%}
     {{ form.non_field_errors }}
-    <h3>General settings</h3>
     <table>
         <tr>
             {{ form.exp_name.errors }}
@@ -144,4 +137,4 @@
     }
 </script>
 
-</body>
+{% endblock %}
