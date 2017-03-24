@@ -2,142 +2,111 @@
 
 {% block content %}
 
-{% if errors %}
-    {% for e in errors %}
-        <b>ERROR: {{ e }}</b><br/>
-    {% endfor %}
-    <hr />
-{% endif %}
+    {% if messages.warnings %}
+        <div class="alert alert-warning">
+            {% for m in messages.warnings %}
+                <strong>Warning: </strong>{{ m }}<br/>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-{% if messages %}
-    {% for m in messages %}
-        <b>INFO: {{ m }}</b><br/>
-    {% endfor %}
-    <hr />
-{% endif %}
+    {% if messages.errors %}
+        <div class="alert alert-danger">
+            {% for m in messages.errors %}
+                <strong>Error: </strong>{{ m }}<br/>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-<h2>{% block title %}Submit experiment{% endblock %}</h2>
+    {% if messages.info %}
+        <div class="alert alert-info">
+            {% for m in messages.info %}
+                <strong>Info: </strong>{{ m }}<br/>
+            {% endfor %}
+        </div>
+    {% endif%}
 
-<form method="post" enctype="multipart/form-data" action="{% if access_code %}{% url 'SubmitExperiment:index' access_code %}{% else %}{% url 'SubmitExperiment:index' %}{% endif %}">
-    {% csrf_token%}
-    {{ form.non_field_errors }}
-    <h3>General settings</h3>
-    <table>
-        <tr>
-            {{ form.exp_name.errors }}
-            <td>{{ form.exp_name.label_tag }}</td>
-            <td>{{ form.exp_name }}</td>
-        </tr>
-        <tr>
-            {{ form.email.errors }}
-            <td>{{ form.email.label_tag }}</td>
-            <td>{{ form.email }}</td>
-        </tr>
-        <tr>
-            {{ form.in_file.errors }}
-            <td>{{ form.in_file.label_tag }}</td>
-            <td>{{ form.in_file }}</td>
-        </tr>
-    </table>
+    {% if messages.success %}
+        <div class="alert alert-success">
+            {% for m in messages.success %}
+                <strong>Success: </strong>{{ m }}<br/>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-    <h3>Configuration settings</h3>
-    <table>
-        <tr>
-            {{ form.default_cfg.errors }}
-            <td>{{ form.default_cfg.label_tag }}</td>
-            <td>{{ form.default_cfg }}</td>
-        </tr>
-        <tr>
-            {{ form.choose_cfg.errors }}
-            <td>{{ form.choose_cfg.label_tag }}</td>
-            <td>{{ form.choose_cfg }}</td>
-        </tr>
-        <tr>
-            {{ form.own_cfg.errors }}
-            <td>{{ form.own_cfg.label_tag }}</td>
-            <td>{{ form.own_cfg }}</td>
-        </tr>
-    </table>
+    <h2>{% block title %}Submit experiment{% endblock %}</h2>
 
-    <h3>Battery application settings</h3>
-    <table>
-        <tr>
-            <td align="right"><label for="batt_all">Switch all</label></td>
-            <td><input type="checkbox" name="batt_all" id="batt_all" onclick="switchBatteries();"></td>
-        </tr>
-        <tr>
-            {{ form.batt_sts.errors }}
-            <td>{{ form.batt_sts.label_tag }}</td>
-            <td>{{ form.batt_sts }}</td>
-        </tr>
-        <tr>
-            {{ form.batt_die.errors }}
-            <td>{{ form.batt_die.label_tag }}</td>
-            <td>{{ form.batt_die }}</td>
-        </tr>
-        <tr>
-            {{ form.batt_tu_sc.errors }}
-            <td>{{ form.batt_tu_sc.label_tag }}</td>
-            <td>{{ form.batt_tu_sc }}</td>
-        </tr>
-        <tr>
-            {{ form.batt_tu_c.errors }}
-            <td>{{ form.batt_tu_c.label_tag }}</td>
-            <td>{{ form.batt_tu_c }}</td>
-        </tr>
-        <tr>
-            {{ form.batt_tu_rab.errors }}
-            <td>{{ form.batt_tu_rab.label_tag }}</td>
-            <td>{{ form.batt_tu_rab }}</td>
-        </tr>
-        <tr>
-            {{ form.batt_tu_ab.errors }}
-            <td>{{ form.batt_tu_ab.label_tag }}</td>
-            <td>{{ form.batt_tu_ab }}</td>
-        </tr>
-        <tr>
-            {{ form.batt_tu_bab.errors }}
-            <td>{{ form.batt_tu_bab.label_tag }}</td>
-            <td>{{ form.batt_tu_bab }}</td>
-        </tr>
-    </table>
+    {% load bootstrap %}
+    <form method="post" enctype="multipart/form-data" action="{% if access_code %}{% url 'SubmitExperiment:index' access_code %}{% else %}{% url 'SubmitExperiment:index' %}{% endif %}">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <ul>
+                {% for m in form.non_field_errors %}
+                    <li><p class="text-danger">{{ m }}</p></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-    <br/>
-    <table>
-        <tr>
-            {{ form.batt_tu_bc.errors }}
-            <td>{{ form.batt_tu_bc.label_tag }}</td>
-            <td>{{ form.batt_tu_bc }}</td>
-        </tr>
-    </table>
+        <fieldset>
+            <legend>General</legend>
+            {{ form.exp_name|bootstrap }}
+            {{ form.in_file|bootstrap }}
+            {{ form.email|bootstrap }}
+        </fieldset>
 
-    <hr/>
-    <br/>
-    <input type="submit" value="Submit"/>
-</form>
+        <fieldset>
+            <legend>Configuration</legend>
+            {{ form.default_cfg|bootstrap }}
+            {{ form.choose_cfg|bootstrap }}
+            {{ form.own_cfg|bootstrap }}
+        </fieldset>
 
-<script language="JavaScript">
-    document.onload=confDisable();
+        <fieldset>
+            <legend>Battery application</legend>
+            <div class="form-group">
+                <input type="checkbox" name="batt_all" id="batt_all" onclick="switchBatteries();">
+                <label for="batt_all">Switch all</label>
+            </div>
+            {{ form.batt_sts|bootstrap }}
+            {{ form.batt_die|bootstrap }}
+            {{ form.batt_tu_sc|bootstrap }}
+            {{ form.batt_tu_c|bootstrap }}
+            {{ form.batt_tu_rab|bootstrap }}
+            {{ form.batt_tu_ab|bootstrap }}
+            {{ form.batt_tu_bab|bootstrap }}
+            <hr/>
+            {{ form.batt_tu_bc|bootstrap }}
+        </fieldset>
 
-    function confDisable() {
-        var def = document.getElementById('{{ form.default_cfg.id_for_label }}').checked;
-        var sel = (document.getElementById('{{ form.choose_cfg.id_for_label }}').value != 0);
-        var own = (document.getElementById('{{ form.own_cfg.id_for_label }}').value != "");
-        document.getElementById('{{ form.default_cfg.id_for_label }}').disabled = (own || sel);
-        document.getElementById('{{ form.choose_cfg.id_for_label }}').disabled = (def || own);
-        document.getElementById('{{ form.own_cfg.id_for_label }}').disabled = (def || sel);
-    }
+        <div class="form-group">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
 
-    function switchBatteries() {
-            document.getElementById('{{ form.batt_sts.id_for_label }}').checked ^= true;
-            document.getElementById('{{ form.batt_die.id_for_label }}').checked ^= true;
-            document.getElementById('{{ form.batt_tu_sc.id_for_label }}').checked ^= true;
-            document.getElementById('{{ form.batt_tu_c.id_for_label }}').checked ^= true;
-            document.getElementById('{{ form.batt_tu_rab.id_for_label }}').checked ^= true;
-            document.getElementById('{{ form.batt_tu_ab.id_for_label }}').checked ^= true;
-            document.getElementById('{{ form.batt_tu_bab.id_for_label }}').checked ^= true;
-            //document.getElementById('{{ form.batt_tu_bc.id_for_label }}').checked ^= true;
-    }
-</script>
+    <script language="JavaScript">
+        document.onload=confDisable();
+
+        function confDisable() {
+            var def = document.getElementById('{{ form.default_cfg.id_for_label }}').checked;
+            var sel = (document.getElementById('{{ form.choose_cfg.id_for_label }}').value != 0);
+            var own = (document.getElementById('{{ form.own_cfg.id_for_label }}').value != "");
+            document.getElementById('{{ form.default_cfg.id_for_label }}').disabled = (own || sel);
+            document.getElementById('{{ form.choose_cfg.id_for_label }}').disabled = (def || own);
+            document.getElementById('{{ form.own_cfg.id_for_label }}').disabled = (def || sel);
+        }
+
+        function switchBatteries() {
+                document.getElementById('{{ form.batt_sts.id_for_label }}').checked ^= true;
+                document.getElementById('{{ form.batt_die.id_for_label }}').checked ^= true;
+                document.getElementById('{{ form.batt_tu_sc.id_for_label }}').checked ^= true;
+                document.getElementById('{{ form.batt_tu_c.id_for_label }}').checked ^= true;
+                document.getElementById('{{ form.batt_tu_rab.id_for_label }}').checked ^= true;
+                document.getElementById('{{ form.batt_tu_ab.id_for_label }}').checked ^= true;
+                document.getElementById('{{ form.batt_tu_bab.id_for_label }}').checked ^= true;
+                //document.getElementById('{{ form.batt_tu_bc.id_for_label }}').checked ^= true;
+        }
+    </script>
 
 {% endblock %}

@@ -53,14 +53,26 @@ class ExperimentForm(forms.Form):
         tu_ab = cleaned_data.get("batt_tu_ab")
         tu_bab = cleaned_data.get("batt_tu_bab")
 
-        if not default_cfg and choose_cfg is None and own_cfg is None:
-            raise forms.ValidationError("You must either use default configuration or choose prepared "
-                                        "configuration or provide own configuration file.",
-                                        code='invalid')
+        errors = []
 
-        if not sts and not die and not tu_sc and not tu_c and \
-                not tu_bc and not tu_rab and not tu_ab and not tu_bab:
-            raise forms.ValidationError("No batteries were set for execution.",
-                                        code='invalid')
+        cfg_settings_sum = 0
+        if default_cfg:
+            cfg_settings_sum += 1
+        if choose_cfg is not None:
+            cfg_settings_sum += 1
+        if own_cfg is not None:
+            cfg_settings_sum += 1
+
+        if cfg_settings_sum == 0:
+            errors.append("You must specify configuration of the experiment.")
+
+        if cfg_settings_sum > 1:
+            errors.append("You specified multiple configurations of the experiment.")
+
+        if not (sts or die or tu_sc or tu_c or tu_bc or tu_rab or tu_ab or tu_bab):
+            errors.append("No battery was set for execution.")
+
+        if len(errors) > 0:
+            raise forms.ValidationError(errors)
 
         return cleaned_data
