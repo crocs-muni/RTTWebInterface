@@ -1,6 +1,9 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
 <a href="{% url 'ViewResults:battery' tst.battery_id %}"><- Back to battery {{ tst.battery_id }}</a>
 <hr/>
-<h2>Detail of test</h2>
+<h2>{% block title %}Test detail{% endblock %}</h2>
 
 <table class="table">
     <tr>
@@ -65,3 +68,4 @@
 {% else %}
     <p>No test variants executed.</p>
 {% endif %}
+{% endblock %}

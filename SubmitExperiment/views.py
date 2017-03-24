@@ -145,8 +145,9 @@ def index(request, access_code=None):
 
             try:
                 print()
-                _thread.start_new_thread(submit_experiment,
-                                         (form, in_file_path, cfg_file_path))
+                submit_experiment(form, in_file_path, cfg_file_path)
+                #_thread.start_new_thread(submit_experiment,
+                #                         (form, in_file_path, cfg_file_path))
             except BaseException as e:
                 print('wtf: {}'.format(e))
 

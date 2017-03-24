@@ -16,9 +16,12 @@
     <hr />
 {% endif %}
 
+<h2>{% block title %}Submit experiment{% endblock %}</h2>
+
 <form method="post" enctype="multipart/form-data" action="{% if access_code %}{% url 'SubmitExperiment:index' access_code %}{% else %}{% url 'SubmitExperiment:index' %}{% endif %}">
     {% csrf_token%}
     {{ form.non_field_errors }}
+    <h3>General settings</h3>
     <table>
         <tr>
             {{ form.exp_name.errors }}

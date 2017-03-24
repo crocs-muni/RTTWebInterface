@@ -1,5 +1,8 @@
-<h2>Experiments</h2>
-<hr/>
+{% extends 'base_layout.html' %}
+
+{% block content %}
+
+<h2>{% block title %}Experiments{% endblock %}</h2>
 
 {% if experiment_list %}
     <table class="table">
@@ -26,3 +29,5 @@
 {% else %}
     <p>No experiments available.</p>
 {% endif %}
+
+{% endblock %}

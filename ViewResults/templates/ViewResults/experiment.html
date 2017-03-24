@@ -1,7 +1,12 @@
+{% extends 'base_layout.html' %}
+
+
+{% block title %}{{ exp.name }} expreriment{% endblock %}
+
+{% block content %}
 <a href="{% url 'ViewResults:index' %}"><- Back to experiments</a>
 <hr/>
 <h2>Detail of experiment</h2>
-<hr/>
 
 <table class="table">
     <tr>
@@ -39,7 +44,6 @@
 </table>
 
 <h2>Analysis done on data by statistical batteries</h2>
-<hr/>
 
 {% if battery_list %}
     <table class="table">
@@ -63,3 +67,5 @@
 {% else %}
     <p>No batteries were yet finished.</p>
 {% endif %}
+
+{% endblock %}

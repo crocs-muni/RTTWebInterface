@@ -1,6 +1,9 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
 <a href="{% url 'ViewResults:test' var.test_id %}"><- Back to test {{ var.test_id }}</a>
 
-<h2>Details of variant of test</h2>
+<h2>{% block title %}Variant detail{% endblock %}</h2>
 <table class="table">
     <tr>
         <th>ID</th>
@@ -47,3 +50,5 @@
 {% endif %}
 
 {% include 'ViewResults/variant_detail.html' %}
+
+{% endblock %}
