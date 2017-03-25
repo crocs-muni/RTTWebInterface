@@ -21,6 +21,7 @@ urlpatterns = [
     # Pages used through the RTT project
     url(r'^$', views.index, name='index'),
     url(r'^Login/', views.login, name='login'),
+    url(r'^Logout/', views.logout, name='logout'),
 
     # Linking other applications
     url(r'^ViewResults/', include('ViewResults.urls')),

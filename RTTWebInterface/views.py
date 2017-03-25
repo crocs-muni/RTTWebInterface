@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 
 from .forms import LoginForm
 
@@ -11,7 +12,6 @@ def index(request):
 
 def login(request):
     if request.user.is_authenticated:
-        # Redirect to root
         return redirect('index')
 
     if request.method != 'POST':
@@ -41,3 +41,9 @@ def login(request):
                 'form': form,
             }
             return render(request, 'login.html', ctx)
+
+
+def logout(request):
+    auth_logout(request)
+    return redirect('index')
+
