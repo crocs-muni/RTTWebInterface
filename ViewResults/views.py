@@ -2,17 +2,17 @@ from django.http import Http404
 from django.shortcuts import render
 from django.db import connections
 from .rtt_db_objects import *
+from .rtt_paginator import *
 
 
 # Create your views here.
 def index(request):
     c = connections['rtt-database']
-    experiment_list = \
-        Experiment.get_all(c)
+    page = request.GET.get('page', RTTPaginator.default_page)
+    item_count = request.GET.get('item_count', RTTPaginator.default_item_count)
 
-    experiment_list.sort(key=lambda x: x.id, reverse=True)
     ctx = {
-        'experiment_list': experiment_list
+        'paginator': RTTPaginator(c, Experiment, page, item_count)
     }
     return render(request, 'ViewResults/index.html', ctx)
 

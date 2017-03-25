@@ -23,8 +23,27 @@ class Experiment(object):
         return get_all_db_objects(conn, Experiment, Experiment.table_name)
 
     @staticmethod
+    def get_all_count(conn) -> int:
+        with conn.cursor() as c:
+            c.execute("SELECT COUNT(1) FROM {}".format(Experiment.table_name))
+            return c.fetchone()[0]
+
+    @staticmethod
     def get_by_id(conn, experiment_id) -> 'Experiment':
         return get_db_object_by_primary_id(conn, Experiment, Experiment.table_name, experiment_id)
+
+    @staticmethod
+    def get_some(conn, offset, count, id_ord_desc=True):
+        select_stmt = "SELECT * FROM {} ORDER BY id".format(Experiment.table_name)
+        if id_ord_desc:
+            select_stmt += " DESC"
+        select_stmt += " LIMIT %s, %s"
+
+        with conn.cursor() as c:
+            c.execute(select_stmt, (offset, count, ))
+            if c.rowcount == 0:
+                return None
+            return map_db_rows_to_objects(c.fetchall(), Experiment)
 
 
 class Job(object):
@@ -483,8 +502,7 @@ def map_db_rows_to_objects(rows, db_obj):
 def get_all_db_objects(conn, db_obj, table_name):
     with conn.cursor() as c:
         c.execute("SELECT * FROM {}".format(table_name))
-        rval = map_db_rows_to_objects(c.fetchall(), db_obj)
-        return rval
+        return map_db_rows_to_objects(c.fetchall(), db_obj)
 
 
 def get_db_object_by_primary_id(conn, db_obj, table_name, primary_id, primary_id_column="id"):
@@ -495,13 +513,10 @@ def get_db_object_by_primary_id(conn, db_obj, table_name, primary_id, primary_id
                               .format(primary_id, table_name))
         if c.rowcount == 0:
             return None
-        rval = map_db_rows_to_objects(c.fetchall(), db_obj)
-        return rval[0]
+        return map_db_rows_to_objects(c.fetchall(), db_obj)[0]
 
 
 def get_db_objects_by_foreign_id(conn, db_obj, table_name, foreign_id, foreign_id_column):
     with conn.cursor() as c:
         c.execute("SELECT * FROM {} WHERE {}=%s".format(table_name, foreign_id_column), [foreign_id])
-        rval = map_db_rows_to_objects(c.fetchall(), db_obj)
-        c.close()
-        return rval
+        return map_db_rows_to_objects(c.fetchall(), db_obj)
