@@ -77,7 +77,7 @@
             {% if paginator.previous %}
             <li>
                 <a href="{% url 'ViewResults:index' %}?page={{ paginator.previous }}"
-                   id="l_prev" onclick="setLinkItemCount('l_prev')">Previous</a>
+                   id="l_prev" onclick="setLinkItemCount('l_prev')">&lsaquo;</a>
             </li>
             {% endif %}
 
@@ -117,7 +117,7 @@
             {% if paginator.next %}
             <li>
                 <a href="{% url 'ViewResults:index' %}?page={{ paginator.next }}"
-                   id="l_next" onclick="setLinkItemCount('l_next')">Next</a>
+                   id="l_next" onclick="setLinkItemCount('l_next')">&rsaquo;</a>
             </li>
             {% endif %}
         </ul>

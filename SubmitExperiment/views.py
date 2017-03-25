@@ -108,7 +108,15 @@ def index(request, access_code=None):
 
         # Validate form and submit experiment
         form = ExperimentForm(request.POST, request.FILES)
-        if form.is_valid():
+        if not form.is_valid():
+            messages.errors.append('Submitted form was not valid.')
+            messages.info.append('Please fix the errors and try again.')
+            ctx = {
+                'messages': messages,
+                'access_code': access_code,
+                'form': form,
+            }
+        else:
             in_file = request.FILES['in_file']
 
             if form.cleaned_data['default_cfg']:
@@ -161,13 +169,5 @@ def index(request, access_code=None):
                 'messages': messages,
                 'access_code': access_code,
                 'form': ExperimentForm(),
-            }
-        else:
-            messages.errors.append('Submitted form was not valid.')
-            messages.info.append('Please fix the errors and try again.')
-            ctx = {
-                'messages': messages,
-                'access_code': access_code,
-                'form': form,
             }
         return render(request, 'SubmitExperiment/index.html', ctx)
