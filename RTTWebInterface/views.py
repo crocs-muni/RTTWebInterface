@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 
@@ -12,7 +12,7 @@ def index(request):
 def login(request):
     if request.user.is_authenticated:
         # Redirect to root
-        return render(request, 'index.html')
+        return redirect('index')
 
     if request.method != 'POST':
         # Show the form
@@ -27,7 +27,7 @@ def login(request):
             if user is not None:
                 # Authentication was successful
                 auth_login(request, user)
-                return render(request, 'index.html')
+                return redirect('index')
             else:
                 # Bad username/password
                 ctx = {
