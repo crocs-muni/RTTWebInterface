@@ -3,5 +3,39 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h1>DUMMY LOGIN PAGE</h1>
+    <style>
+    form {
+        width:350px;
+        margin: auto;
+    }
+    </style>
+
+    {% load bootstrap %}
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% if errors %}
+        <div class="alert alert-danger">
+            {% for m in errors %}
+                <strong>Error: </strong>{{ m }}<br/>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if form.non_field_errors %}
+            <ul>
+                {% for m in form.non_field_errors %}
+                    <li><p class="text-danger">{{ m }}</p></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {{ form.username|bootstrap }}
+        {{ form.password|bootstrap }}
+
+        <div class="form-group">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Log in</button>
+            </div>
+        </div>
+
+    </form>
+
 {% endblock %}
