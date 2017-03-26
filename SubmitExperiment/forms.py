@@ -5,37 +5,53 @@ from .models import PredefinedConfiguration
 
 class ExperimentForm(forms.Form):
     # Required fields
-    exp_name = forms.CharField(label='Experiment name',
-                               max_length=255)
+    exp_name = forms.CharField(
+        label='Experiment name',
+        max_length=255)
     in_file = forms.FileField(label='Input file for batteries')
 
     # Configuration fields
-    default_cfg = forms.BooleanField(label='Use default configuration (recommended)',
-                                     required=False, initial=True,
-                                     widget=forms.CheckboxInput(attrs={'onclick': 'confDisable();'}))
-    choose_cfg = forms.ModelChoiceField(queryset=PredefinedConfiguration.objects.order_by('required_bytes'),
-                                        label='Choose configuration', empty_label='----------', required=False,
-                                        widget=forms.Select(attrs={'onclick': 'confDisable();'}))
-    own_cfg = forms.FileField(label='Configuration file (advanced user)', required=False,
-                              widget=forms.FileInput(attrs={'onchange': 'confDisable();'}))
+    default_cfg = forms.BooleanField(
+        label='Use default configuration (recommended)',
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={'onclick': 'confDisable();'}))
+    choose_cfg = forms.ModelChoiceField(
+        queryset=PredefinedConfiguration.objects.order_by('required_bytes'),
+        label='Choose configuration',
+        empty_label='----------',
+        required=False,
+        widget=forms.Select(attrs={'onclick': 'confDisable();'}))
+    own_cfg = forms.FileField(
+        label='Configuration file (advanced user)',
+        required=False,
+        widget=forms.FileInput(attrs={'onchange': 'confDisable();'}))
 
     # Battery fields
-    batt_sts = forms.BooleanField(label='NIST Statistical Testing Suite',
-                                  required=False)
-    batt_die = forms.BooleanField(label='DIEHARDER',
-                                  required=False)
-    batt_tu_sc = forms.BooleanField(label='TestU01 Small Crush',
-                                    required=False)
-    batt_tu_c = forms.BooleanField(label='TestU01 Crush',
-                                   required=False)
-    batt_tu_bc = forms.BooleanField(label='TestU01 Big Crush (requires at least 20GB of data, 60GB for full run)',
-                                    required=False)
-    batt_tu_rab = forms.BooleanField(label='TestU01 Rabbit',
-                                     required=False)
-    batt_tu_ab = forms.BooleanField(label='TestU01 Alphabit',
-                                    required=False)
-    batt_tu_bab = forms.BooleanField(label='TestU01 Block Alphabit',
-                                     required=False)
+    batt_sts = forms.BooleanField(
+        label='NIST Statistical Testing Suite',
+        required=False)
+    batt_die = forms.BooleanField(
+        label='DIEHARDER',
+        required=False)
+    batt_tu_sc = forms.BooleanField(
+        label='TestU01 Small Crush',
+        required=False)
+    batt_tu_c = forms.BooleanField(
+        label='TestU01 Crush',
+        required=False)
+    batt_tu_bc = forms.BooleanField(
+        label='TestU01 Big Crush (requires at least 20GB of data, 60GB for full run)',
+        required=False)
+    batt_tu_rab = forms.BooleanField(
+        label='TestU01 Rabbit',
+        required=False)
+    batt_tu_ab = forms.BooleanField(
+        label='TestU01 Alphabit',
+        required=False)
+    batt_tu_bab = forms.BooleanField(
+        label='TestU01 Block Alphabit',
+        required=False)
 
     def clean(self):
         cleaned_data = super().clean()

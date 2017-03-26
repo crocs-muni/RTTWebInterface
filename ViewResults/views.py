@@ -3,6 +3,7 @@ from django.shortcuts import render, reverse
 from django.db import connections
 from .rtt_db_objects import *
 from .rtt_paginator import *
+from .forms import FilterExperimentsForm
 
 
 # Create your views here.
@@ -13,7 +14,8 @@ def index(request):
     pag = RTTPaginator(c, Experiment, page, item_count, reverse('ViewResults:index'))
     # pag.def_item_counts = None
     ctx = {
-        'paginator': pag
+        'paginator': pag,
+        'form': FilterExperimentsForm()
     }
     return render(request, 'ViewResults/index.html', ctx)
 

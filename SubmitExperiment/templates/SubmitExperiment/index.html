@@ -40,7 +40,7 @@
     {% endif %}
 
     {% load bootstrap %}
-    <form style="margin: auto; width: 700px" method="post" enctype="multipart/form-data" action="{% if access_code %}{% url 'SubmitExperiment:index' access_code %}{% else %}{% url 'SubmitExperiment:index' %}{% endif %}">
+    <form style="margin: auto; width: 700px" method="post" enctype="multipart/form-data" action="{% url 'SubmitExperiment:index' %}{% if access_code %}{{ access_code }}{% endif %}">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <ul>
@@ -80,6 +80,7 @@
             {{ form.batt_tu_bc|bootstrap }}
         </fieldset>
 
+        <br/>
         <div class="form-group">
             <div class="col-sm-10">
                 <button type="submit" class="btn btn-primary">Submit</button>

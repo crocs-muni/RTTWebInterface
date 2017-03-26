@@ -2,14 +2,23 @@ from django import forms
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='Username', max_length=150)
-    password = forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField(
+        label='Username',
+        max_length=150)
+    password = forms.CharField(
+        widget=forms.PasswordInput())
 
 
 class PasswordChangeForm(forms.Form):
-    old_pwd = forms.CharField(label="Current password", widget=forms.PasswordInput())
-    new_pwd = forms.CharField(label="New password", widget=forms.PasswordInput())
-    new_pwd_again = forms.CharField(label="New password again", widget=forms.PasswordInput())
+    old_pwd = forms.CharField(
+        label="Current password",
+        widget=forms.PasswordInput())
+    new_pwd = forms.CharField(
+        label="New password",
+        widget=forms.PasswordInput())
+    new_pwd_again = forms.CharField(
+        label="New password again",
+        widget=forms.PasswordInput())
 
     def clean_new_pwd_again(self):
         new_pwd = self.cleaned_data.get('new_pwd')
@@ -23,11 +32,16 @@ class PasswordChangeForm(forms.Form):
 
 
 class EditAccountForm(forms.Form):
-    email = forms.EmailField(label='E-Mail Address')
-    first_name = forms.CharField(label='First name', max_length=30,
-                                 required=False)
-    last_name = forms.CharField(label='Last name', max_length=30,
-                                required=False)
+    email = forms.EmailField(
+        label='E-Mail Address')
+    first_name = forms.CharField(
+        label='First name',
+        max_length=30,
+        required=False)
+    last_name = forms.CharField(
+        label='Last name',
+        max_length=30,
+        required=False)
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
