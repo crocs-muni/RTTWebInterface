@@ -116,7 +116,9 @@ class RTTPaginator(object):
         <li class="disabled"><a>...</a></li>
         '''
         a_tag_str = '''
-        <a href="{0}page={1}" id="{2}" onclick="setLinkItemCount('{2}')">{3}</a>
+        <a href="{0}page={1}&item_count=''' + str(self.items_per_page)
+        a_tag_str += '''
+        ">{2}</a>
         '''
         link_str = '''
         <li>
@@ -129,6 +131,9 @@ class RTTPaginator(object):
         </li>
         '''.format(a_tag_str)
 
+        prev_arrow = self.page
+        next_arrow = self.page
+
         # Starting to build return html
         rval = '''
         <div class="text-center">
@@ -136,50 +141,64 @@ class RTTPaginator(object):
         '''
         # Previous button
         if self.previous is not None:
-            rval += link_str.format(self.address, self.previous, 'l_prev', '&lsaquo;')
+            prev_arrow = self.previous
+            rval += link_str.format(self.address, self.previous, '&lsaquo;')
 
         # First button
         if self.first is not None:
-            rval += link_str.format(self.address, self.first, 'l_first', self.first)
+            rval += link_str.format(self.address, self.first, self.first)
             if self.first != self.pages[0] - 1:
                 rval += dots_str
 
         # Buttons in between
         for p in self.pages:
             if p == self.page:
-                rval += link_active_str.format(self.address, p, 'l_{}'.format(p), p)
+                rval += link_active_str.format(self.address, p, p)
             else:
-                rval += link_str.format(self.address, p, 'l_{}'.format(p), p)
+                rval += link_str.format(self.address, p, p)
 
         # Last button
         if self.last is not None:
             if self.last != self.pages[-1] + 1:
                 rval += dots_str
 
-            rval += link_str.format(self.address, self.last, 'l_last', self.last)
+            rval += link_str.format(self.address, self.last, self.last)
 
         # Next button
         if self.next is not None:
-            rval += link_str.format(self.address, self.next, 'l_next', '&rsaquo;')
+            next_arrow = self.next
+            rval += link_str.format(self.address, self.next, '&rsaquo;')
 
         # Close tags
         rval += '''
         </ul>
+        <span class="help-block">You can navigate between pages using arrow keys.</span>
         </div>
         '''
-        # Append needed script
+        # Append needed scripts
         rval += '''
         <script language="JavaScript">
-            function setLinkItemCount(link_id) {
+            function setLinkItemCount(link_id) {{
                 var chosen = document.getElementById("item_count").value;
                 if (chosen == null)
                     return;
                 var val = document.getElementById(link_id).getAttribute("href");
                 val += "&item_count=" + chosen;
                 document.getElementById(link_id).setAttribute("href", val);
-            }
-        </script>
-        '''
+            }}
 
-        # Not horribly easy to read I would say.
+            document.onkeydown = function(e) {{
+                switch (e.keyCode) {{
+                    case 37:
+                        window.location.href = "{0}page={2}&item_count={1}";
+                        break;
+                    case 39:
+                        window.location.href = "{0}page={3}&item_count={1}";
+                        break;
+                }}
+            }};
+        </script>
+        '''.format(self.address, self.items_per_page, prev_arrow, next_arrow)
+
+        # Not horribly easy to read I would say. But you will manage.
         return rval
