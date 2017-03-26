@@ -49,7 +49,7 @@ def get_auth_error(request, access_code):
         return None
 
 
-def submit_experiment(form, in_file_path, cfg_file_path):
+def submit_experiment(form, email, in_file_path, cfg_file_path):
     args_str = os.path.abspath(SUBMIT_EXPERIMENT_BINARY)
     if form.cleaned_data['batt_sts']:
         args_str += ' --nist_sts '
@@ -68,8 +68,8 @@ def submit_experiment(form, in_file_path, cfg_file_path):
     if form.cleaned_data['batt_tu_bab']:
         args_str += ' --tu01_blockalphabit '
 
-    if form.cleaned_data['email'] != '':
-        args_str += ' --email {} '.format(form.cleaned_data['email'])
+    if email is not None and len(email) > 0:
+        args_str += ' --email {} '.format(email)
 
     args_str += ' --name \'{}\' --cfg \'{}\' --file \'{}\' ' \
         .format(form.cleaned_data['exp_name'], cfg_file_path, in_file_path)
@@ -157,10 +157,11 @@ def index(request, access_code=None):
             fs = FileSystemStorage()
             in_file_path = fs.path(fs.save(in_file.name, in_file))
             cfg_file_path = fs.path(fs.save(cfg_file.name, cfg_file))
+            email = request.user.email
 
             try:
                 _thread.start_new_thread(submit_experiment,
-                                         (form, in_file_path, cfg_file_path))
+                                         (form, email, in_file_path, cfg_file_path))
             except BaseException as e:
                 print('Could not start a thread: {}'.format(e))
 

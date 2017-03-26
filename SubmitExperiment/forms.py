@@ -8,8 +8,6 @@ class ExperimentForm(forms.Form):
     exp_name = forms.CharField(label='Experiment name',
                                max_length=255)
     in_file = forms.FileField(label='Input file for batteries')
-    email = forms.EmailField(label='E-Mail for notifications',
-                             max_length=255, required=False)
 
     # Configuration fields
     default_cfg = forms.BooleanField(label='Use default configuration (recommended)',
