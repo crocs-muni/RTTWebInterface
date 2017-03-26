@@ -1,43 +1,46 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
+    <h2 style="margin: auto; width: 800px">{% block title %}Submit experiment{% endblock %}</h2>
+    <br/>
 
     {% if messages.warnings %}
-        <div class="alert alert-warning">
+        <div class="alert alert-warning" style="margin: auto; width: 700px">
             {% for m in messages.warnings %}
                 <strong>Warning: </strong>{{ m }}<br/>
             {% endfor %}
         </div>
+        <br/>
     {% endif %}
 
     {% if messages.errors %}
-        <div class="alert alert-danger">
+        <div class="alert alert-danger" style="margin: auto; width: 800px">
             {% for m in messages.errors %}
                 <strong>Error: </strong>{{ m }}<br/>
             {% endfor %}
         </div>
+        <br/>
     {% endif %}
 
     {% if messages.info %}
-        <div class="alert alert-info">
+        <div class="alert alert-info" style="margin: auto; width: 800px">
             {% for m in messages.info %}
                 <strong>Info: </strong>{{ m }}<br/>
             {% endfor %}
         </div>
+        <br/>
     {% endif%}
 
     {% if messages.success %}
-        <div class="alert alert-success">
+        <div class="alert alert-success" style="margin: auto; width: 800px">
             {% for m in messages.success %}
                 <strong>Success: </strong>{{ m }}<br/>
             {% endfor %}
         </div>
     {% endif %}
 
-    <h2>{% block title %}Submit experiment{% endblock %}</h2>
-
     {% load bootstrap %}
-    <form method="post" enctype="multipart/form-data" action="{% if access_code %}{% url 'SubmitExperiment:index' access_code %}{% else %}{% url 'SubmitExperiment:index' %}{% endif %}">
+    <form style="margin: auto; width: 700px" method="post" enctype="multipart/form-data" action="{% if access_code %}{% url 'SubmitExperiment:index' access_code %}{% else %}{% url 'SubmitExperiment:index' %}{% endif %}">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <ul>
