@@ -6,31 +6,14 @@
         {% block title %}Experiments{% endblock %}
     </h2>
 
-    {# Items on single page #}
+    {# Items on single page control #}
     {% if paginator.def_item_counts %}
-        <span style="float: right">
-            <form role="form" class="form-inline">
-                <div class="form-group">
-                    <label for="item_count">Items per page</label>
-                    <select id="item_count" title="Items per page" class="form-control">
-                    {% for count in paginator.def_item_counts %}
-                        {% if count == paginator.items_per_page %}
-                            <option value="{{ count }}" selected>{{ count }}</option>
-                        {% else %}
-                            <option value="{{ count }}">{{ count }}</option>
-                        {% endif %}
-                    {% endfor %}
-                    </select>
-                </div>
-                <div class="btn-group">
-                    <a id="apply_btn" class="btn btn-default" onclick="setLinkItemCount('apply_btn');"
-                       href="{% url 'ViewResults:index' %}?page=1">
-                        Apply
-                    </a>
-                </div>
-            </form>
-        </span>
+    <span style="float: right">
+        {{ paginator.get_item_count_picker|safe }}
+    </span>
     {% endif %}
+
+    {# Filtering results #}
 
     {# Listing the experiments #}
     {% if paginator.object_list %}
@@ -67,69 +50,9 @@
             </tbody>
         </table>
     {% else %}
-        <p><h4>Nothing to show.</h4></p>
+        <h4>Nothing to show.</h4>
     {% endif %}
 
-    {# Pagination #}
-    <div class="text-center">
-        <ul class="pagination pagination-lg">
-            {# Previous button #}
-            {% if paginator.previous %}
-            <li>
-                <a href="{% url 'ViewResults:index' %}?page={{ paginator.previous }}"
-                   id="l_prev" onclick="setLinkItemCount('l_prev')">&lsaquo;</a>
-            </li>
-            {% endif %}
-
-            {# First button #}
-            {% if paginator.first %}
-            <li>
-                <a href="{% url 'ViewResults:index' %}?page={{ paginator.first }}"
-                   id="l_first" onclick="setLinkItemCount('l_first')">{{ paginator.first }}</a>
-            </li>
-            <li class="disabled"><a>...</a></li>
-            {% endif %}
-
-            {# Pages in between #}
-            {% if paginator.pages %}
-                {% for page in paginator.pages %}
-                    {% if page == paginator.page %}
-                    <li class="active">
-                    {% else %}
-                    <li>
-                    {% endif %}
-                        <a href="{% url 'ViewResults:index' %}?page={{ page }}"
-                           id="l_{{ page }}" onclick="setLinkItemCount('l_{{ page }}')">{{ page }}</a>
-                    </li>
-                {% endfor %}
-            {% endif %}
-
-            {# Last button #}
-            {% if paginator.last %}
-            <li class="disabled"><a>...</a></li>
-            <li>
-                <a href="{% url 'ViewResults:index' %}?page={{ paginator.last }}"
-                   id="l_last" onclick="setLinkItemCount('l_last')">{{ paginator.last }}</a>
-            </li>
-            {% endif %}
-
-            {# Next button #}
-            {% if paginator.next %}
-            <li>
-                <a href="{% url 'ViewResults:index' %}?page={{ paginator.next }}"
-                   id="l_next" onclick="setLinkItemCount('l_next')">&rsaquo;</a>
-            </li>
-            {% endif %}
-        </ul>
-    </div>
-    
-    <script language="JavaScript">
-        function setLinkItemCount(link_id) {
-            var chosen = document.getElementById("item_count").value;
-            var val = document.getElementById(link_id).getAttribute("href");
-            val += "&item_count=" + chosen;
-            document.getElementById(link_id).setAttribute("href", val);
-        }
-    </script>
-
+    {# Render pagination controls #}
+    {{ paginator.get_pagination_links|safe }}
 {% endblock %}

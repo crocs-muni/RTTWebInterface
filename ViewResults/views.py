@@ -1,5 +1,5 @@
 from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 from django.db import connections
 from .rtt_db_objects import *
 from .rtt_paginator import *
@@ -10,9 +10,10 @@ def index(request):
     c = connections['rtt-database']
     page = request.GET.get('page', RTTPaginator.default_page)
     item_count = request.GET.get('item_count', RTTPaginator.default_item_count)
-
+    pag = RTTPaginator(c, Experiment, page, item_count, reverse('ViewResults:index'))
+    # pag.def_item_counts = None
     ctx = {
-        'paginator': RTTPaginator(c, Experiment, page, item_count)
+        'paginator': pag
     }
     return render(request, 'ViewResults/index.html', ctx)
 
