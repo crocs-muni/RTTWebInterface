@@ -1,11 +1,14 @@
 {% extends 'base_layout.html' %}
 
-{% block title %}Randomness Testing Toolkit{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
     <p>
         {% if user.is_authenticated %}
             <p>You are logged in {{ user.username }}.</p>
+            <p>Your email is {{ user.email }}</p>
+            <p>Your first name is {{ user.first_name }}</p>
+            <p>Your last name is {{ user.last_name }}</p>
         {% endif %}
         <i>Here is info about our AWESOME tool for detecting biases in supposedly random data.</i>
     </p>

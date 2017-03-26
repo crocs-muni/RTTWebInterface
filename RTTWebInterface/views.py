@@ -77,3 +77,26 @@ def password_change(request):
             request.user.set_password(new_pwd)
             request.user.save()
             return redirect('login')
+
+
+def edit_account(request):
+    if not request.user.is_authenticated:
+        return redirect('index')
+
+    user = request.user
+    if request.method != 'POST':
+        return render(request, 'edit_account.html', {'form': EditAccountForm(user=user)})
+    else:
+        form = EditAccountForm(request.POST, user=user)
+        if not form.is_valid():
+            ctx = {
+                'errors': ['Submitted form was not valid'],
+                'form': form,
+            }
+            return render(request, 'edit_account.html', ctx)
+        else:
+            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.save()
+            return redirect('index')

@@ -20,3 +20,18 @@ class PasswordChangeForm(forms.Form):
             raise forms.ValidationError('Passwords do not match.')
 
         return new_pwd_again
+
+
+class EditAccountForm(forms.Form):
+    email = forms.EmailField(label='E-Mail Address')
+    first_name = forms.CharField(label='First name', max_length=30,
+                                 required=False)
+    last_name = forms.CharField(label='Last name', max_length=30,
+                                required=False)
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(EditAccountForm, self).__init__(*args, **kwargs)
+        self.fields['email'].initial = user.email
+        self.fields['first_name'].initial = user.first_name
+        self.fields['last_name'].initial = user.last_name
