@@ -61,15 +61,15 @@ class Experiment(object):
         query = "SELECT * FROM {} WHERE".format(Experiment.table_name)
         if name is not None:
             first = False
-            query += " name LIKE %%s%"
-            arg_list.append(name)
+            query += " name LIKE %s"
+            arg_list.append("%" + name + "%")
 
         if email is not None:
             if not first:
                 query += " AND"
             else:
                 first = False
-            query += " email == %s"
+            query += " author_email = %s"
             arg_list.append(email)
 
         if created_from is not None:
@@ -91,7 +91,7 @@ class Experiment(object):
         if sha256 is not None:
             if not first:
                 query += " AND"
-            query += " data_file_sha256 == %s"
+            query += " data_file_sha256 = %s"
 
         query += " ORDER BY id"
         if id_ord_desc:
@@ -103,7 +103,7 @@ class Experiment(object):
         with conn.cursor() as c:
             c.execute(query, arg_list)
             if c.rowcount == 0:
-                return None
+                return []
             return map_db_rows_to_objects(c.fetchall(), Experiment)
 
 
