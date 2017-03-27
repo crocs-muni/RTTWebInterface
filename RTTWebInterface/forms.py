@@ -4,7 +4,8 @@ from django import forms
 class LoginForm(forms.Form):
     username = forms.CharField(
         label='Username',
-        max_length=150)
+        max_length=150,
+        widget=forms.TextInput(attrs={'autofocus': '1'}))
     password = forms.CharField(
         widget=forms.PasswordInput())
 

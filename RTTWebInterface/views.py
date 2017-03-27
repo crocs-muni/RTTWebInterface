@@ -94,7 +94,7 @@ def edit_account(request):
         form = EditAccountForm(request.POST, user=user)
         if not form.is_valid():
             ctx = {
-                'errors': ['Submitted form was not valid'],
+                'errors': ['Submitted form was not valid.'],
                 'form': form,
             }
             return render(request, 'edit_account.html', ctx)

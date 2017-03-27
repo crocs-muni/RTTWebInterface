@@ -1,0 +1,45 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+    <h2 style="margin: auto; width: 500px">
+    {% block title %}Add user{% endblock %}
+    </h2>
+    <br/>
+    {% if success %}
+        <div style="margin: auto; width: 500px" class="alert alert-success">
+            {% for m in success %}
+                <strong>Success: </strong>{{ m }}<br/>
+            {% endfor %}
+        </div>
+        <br/>
+    {% endif %}
+
+    {% if errors %}
+        <div style="margin: auto; width: 500px" class="alert alert-danger">
+            {% for m in errors %}
+                <strong>Error: </strong>{{ m }}<br/>
+            {% endfor %}
+        </div>
+        <br/>
+    {% endif %}
+
+    {% load bootstrap %}
+    <form style="margin: auto; width: 400px" method="post" action="{% url 'Administration:add_user' %}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <ul>
+                {% for m in form.non_field_errors %}
+                    <li><p class="text-danger">{{ m }}</p></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {{ form|bootstrap }}
+        <br/>
+        <div class="form-group">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Create account</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

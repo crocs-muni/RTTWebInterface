@@ -5,4 +5,5 @@ from . import views
 app_name = 'Administration'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^AddUser/$', views.add_user, name='add_user')
 ]
