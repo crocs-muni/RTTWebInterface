@@ -49,6 +49,10 @@ def logout(request):
     return redirect('index')
 
 
+def register(request):
+    return render(request, 'register.html')
+
+
 def password_change(request):
     if not request.user.is_authenticated:
         return redirect('index')

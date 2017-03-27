@@ -20,10 +20,11 @@ from . import views
 urlpatterns = [
     # Pages used through the RTT project
     url(r'^$', views.index, name='index'),
-    url(r'^Login/', views.login, name='login'),
-    url(r'^Logout/', views.logout, name='logout'),
-    url(r'^PasswordChange', views.password_change, name='password_change'),
-    url(r'^EditAccount', views.edit_account, name='edit_account'),
+    url(r'^Login/$', views.login, name='login'),
+    url(r'^Logout/$', views.logout, name='logout'),
+    url(r'^PasswordChange/$', views.password_change, name='password_change'),
+    url(r'^EditAccount/$', views.edit_account, name='edit_account'),
+    url(r'^Register/$', views.register, name='register'),
 
     # Linking other applications
     url(r'^ViewResults/', include('ViewResults.urls')),
