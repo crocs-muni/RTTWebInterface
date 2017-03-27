@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'ViewResults.apps.ViewresultsConfig',
     'SubmitExperiment.apps.SubmitexperimentConfig',
+    'Administration.apps.AdministrationConfig',
     'bootstrap3',
     'bootstrapform',
     'datetimewidget',
