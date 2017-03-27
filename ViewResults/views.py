@@ -58,7 +58,7 @@ def experiment(request, experiment_id):
     c = connections['rtt-database']
     exp = Experiment.get_by_id(c, experiment_id)
     if not exp:
-        raise Http404("No such experiment")
+        raise Http404("No such experiment.")
 
     ctx = {
         'exp': exp,

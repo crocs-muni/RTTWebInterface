@@ -1,8 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import user_passes_test
 from .forms import *
-
+from django.http import Http404
 
 def get_auth_error(request):
     if request.user.is_authenticated:
@@ -68,3 +67,23 @@ def add_user(request):
                 'form': AddUserForm(),
             }
             return render(request, 'Administration/add_user.html', ctx)
+
+
+def delete_user(request, user_id):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        raise Http404("No such user.")
+
+    if request.method != 'POST':
+        ctx = {
+            'u': user
+        }
+        return render(request, 'Administration/delete_user.html', ctx)
+    else:
+        user.delete()
+        return redirect('Administration:index')
