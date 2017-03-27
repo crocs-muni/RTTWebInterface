@@ -1,11 +1,11 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
-    <h2 style="margin: auto; width: 800px">{% block title %}Submit experiment{% endblock %}</h2>
+    <h2>{% block title %}Submit experiment{% endblock %}</h2>
     <br/>
 
     {% if messages.warnings %}
-        <div class="alert alert-warning" style="margin: auto; width: 800px">
+        <div class="alert alert-warning">
             {% for m in messages.warnings %}
                 <strong>Warning: </strong>{{ m }}<br/>
             {% endfor %}
@@ -14,7 +14,7 @@
     {% endif %}
 
     {% if messages.errors %}
-        <div class="alert alert-danger" style="margin: auto; width: 800px">
+        <div class="alert alert-danger">
             {% for m in messages.errors %}
                 <strong>Error: </strong>{{ m }}<br/>
             {% endfor %}
@@ -23,7 +23,7 @@
     {% endif %}
 
     {% if messages.info %}
-        <div class="alert alert-info" style="margin: auto; width: 800px">
+        <div class="alert alert-info">
             {% for m in messages.info %}
                 <strong>Info: </strong>{{ m }}<br/>
             {% endfor %}
@@ -32,7 +32,7 @@
     {% endif%}
 
     {% if messages.success %}
-        <div class="alert alert-success" style="margin: auto; width: 800px">
+        <div class="alert alert-success">
             {% for m in messages.success %}
                 <strong>Success: </strong>{{ m }}<br/>
             {% endfor %}
@@ -40,7 +40,7 @@
     {% endif %}
 
     {% load bootstrap %}
-    <form style="margin: auto; width: 700px" method="post" enctype="multipart/form-data" action="{% url 'SubmitExperiment:index' %}{% if access_code %}{{ access_code }}{% endif %}">
+    <form method="post" enctype="multipart/form-data" action="{% url 'SubmitExperiment:index' %}{% if access_code %}{{ access_code }}{% endif %}">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <ul>

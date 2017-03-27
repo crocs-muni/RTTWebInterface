@@ -4,16 +4,16 @@
 
 {% block content %}
     {% if errors %}
-        <div style="margin: auto; width: 400px" class="alert alert-danger">
+        <div style="margin: auto; max-width: 400px" class="alert alert-danger">
             {% for m in errors %}
                 <strong>Error: </strong>{{ m }}<br/>
             {% endfor %}
         </div>
         <br/>
-        {% endif %}
+    {% endif %}
 
     {% load bootstrap %}
-    <form style="margin: auto; width: 300px" method="post" action="{% url 'login' %}">
+    <form style="margin: auto; max-width: 300px" method="post" action="{% url 'login' %}">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <ul>

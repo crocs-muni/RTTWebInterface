@@ -2,13 +2,13 @@
 
 {% block content %}
 
-    <h2 style="text-align: left; display: inline">
+    <h2>
         {% block title %}Experiments{% endblock %}
     </h2>
 
     {# Items on single page control #}
     {% if paginator.def_item_counts %}
-    <span style="float: right">
+    <span>
         {{ paginator.get_item_count_picker|safe }}
     </span>
     {% endif %}
@@ -16,7 +16,7 @@
     <br/><br/>
 
     {# Filtering results #}
-    <div style="margin: auto; width: 700px" class="panel-group">
+    <div class="panel-group">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
