@@ -51,11 +51,33 @@
                             </a>
                         </li>
 
-                        <li>
-                            <a href="{% url 'Administration:index' %}" class="btn btn-default">
-                                Administration
-                            </a>
+                        {% if user.is_superuser %}
+                            <li class="dropdown">
+                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">Administration<strong class="caret"></strong></a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{% url 'Administration:list_users' %}">Users</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'Administration:add_user' %}">Create new user</a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="#">Access codes</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Create new access code</a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="#">Predefined configurations</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Create new configuration</a>
+                                    </li>
+                                </ul>
                         </li>
+                        {% endif %}
 
                         {% if user.is_authenticated %}
                         <li class="dropdown pull-right">
