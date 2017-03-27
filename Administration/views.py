@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from .forms import *
 from django.http import Http404
 
+
 def get_auth_error(request):
     if request.user.is_authenticated:
         if request.user.is_superuser:
@@ -87,3 +88,46 @@ def delete_user(request, user_id):
     else:
         user.delete()
         return redirect('Administration:index')
+
+
+def edit_user(request, user_id):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        raise Http404("No such user.")
+
+    if request.method != 'POST':
+        ctx = {
+            'u': user,
+            'form': EditUserForm(user=user),
+        }
+        return render(request, 'Administration/edit_user.html', ctx)
+    else:
+        form = EditUserForm(request.POST, user=user)
+        if not form.is_valid():
+            ctx = {
+                'u': user,
+                'errors': ['Submitted form was not valid.'],
+                'form': form,
+            }
+            return render(request, 'Administration/edit_user.html', ctx)
+        else:
+            pwd = form.cleaned_data['password']
+            if pwd is not None and len(pwd) > 0:
+                user.set_password(pwd)
+
+            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.is_superuser = form.cleaned_data['superuser']
+            user.save()
+            ctx = {
+                'u': user,
+                'success': ['User {} was modified.'.format(user.username)],
+                'form': form
+            }
+            return render(request, 'Administration/edit_user.html', ctx)

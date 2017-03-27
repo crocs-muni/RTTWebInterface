@@ -1,12 +1,12 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
-    <h2 style="margin: auto; width: 500px">
+    <h2>
     {% block title %}Edit account{% endblock %}
     </h2>
     <br/>
     {% if errors %}
-        <div style="margin: auto; width: 500px" class="alert alert-danger">
+        <div class="alert alert-danger">
             {% for m in errors %}
                 <strong>Error: </strong>{{ m }}<br/>
             {% endfor %}
@@ -15,7 +15,7 @@
     {% endif %}
 
     {% load bootstrap %}
-    <form style="margin: auto; width: 400px" method="post" action="{% url 'edit_account' %}">
+    <form method="post" action="{% url 'edit_account' %}">
         {% csrf_token %}
 
         {% if form.non_field_errors %}
