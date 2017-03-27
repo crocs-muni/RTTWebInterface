@@ -4,50 +4,54 @@ from django.db import connections
 from .rtt_db_objects import *
 from .rtt_paginator import *
 from .forms import FilterExperimentsForm
+from django.utils.dateparse import parse_datetime
 
 
 # Create your views here.
 def index(request):
-    c = connections['rtt-database']
     if request.method != 'POST':
+        # Filling form object from url parameters
+        args = {
+            'name': request.GET.get('name', None),
+            'sha256': request.GET.get('sha256', None),
+            'only_own': request.GET.get('only_own', False),
+            'created_from': parse_datetime(request.GET.get('created_from', '')),
+            'created_to': parse_datetime(request.GET.get('created_to', ''))
+        }
+        form = FilterExperimentsForm(args)
+    else:
+        # Filling form object from posted form
+        form = FilterExperimentsForm(request.POST)
+
+    c = connections['rtt-database']
+    if not form.is_valid():
         ctx = {
             'paginator': RTTPaginator(request, c, Experiment),
-            'form': FilterExperimentsForm()
+            'form': form
         }
         return render(request, 'ViewResults/index.html', ctx)
+
+    if form.cleaned_data['only_own'] and request.user.is_authenticated:
+        email = request.user.email
     else:
-        form = FilterExperimentsForm(request.POST)
-        if not form.is_valid():
-            ctx = {
-                'paginator': RTTPaginator(request, c, Experiment),
-                'form': form,
-            }
-            return render(request, 'ViewResults/index.html', ctx)
-        else:
-            name_filter = form.cleaned_data['name_filter']
-            if name_filter == '':
-                name_filter = None
-            sha256_filter = form.cleaned_data['sha256_filter']
-            if sha256_filter == '':
-                sha256_filter = None
-            only_own = form.cleaned_data['only_own']
-            if only_own and request.user.is_authenticated:
-                email_filter = request.user.email
-            else:
-                email_filter = None
-            date_filter_from = form.cleaned_data['date_filter_from']
-            date_filter_to = form.cleaned_data['date_filter_to']
-            object_list = Experiment.get_all_filtered(c,
-                                                      name=name_filter,
-                                                      sha256=sha256_filter,
-                                                      email=email_filter,
-                                                      created_from=date_filter_from,
-                                                      create_to=date_filter_to)
-            ctx = {
-                'paginator': RTTPaginator(request, c, Experiment, object_list=object_list),
-                'form': form,
-            }
-            return render(request, 'ViewResults/index.html', ctx)
+        email = None
+
+    object_list = Experiment.get_all_filtered(
+        c,
+        name=form.cleaned_data['name'],
+        sha256=form.cleaned_data['sha256'],
+        created_from=form.cleaned_data['created_from'],
+        created_to=form.cleaned_data['created_to'],
+        email=email,
+    )
+
+    ctx = {
+        'paginator': RTTPaginator(request, c, Experiment,
+                                  object_list=object_list,
+                                  url_args=form.as_url_args()),
+        'form': form,
+    }
+    return render(request, 'ViewResults/index.html', ctx)
 
 
 def experiment(request, experiment_id):

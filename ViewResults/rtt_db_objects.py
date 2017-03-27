@@ -54,17 +54,17 @@ class Experiment(object):
         name = kwargs.pop('name')
         email = kwargs.pop('email')
         created_from = kwargs.pop('created_from')
-        created_to = kwargs.pop('create_to')
+        created_to = kwargs.pop('created_to')
         sha256 = kwargs.pop('sha256')
 
         # Building the query
         query = "SELECT * FROM {} WHERE".format(Experiment.table_name)
-        if name is not None:
+        if name is not None and len(name) > 0:
             first = False
             query += " name LIKE %s"
             arg_list.append("%" + name + "%")
 
-        if email is not None:
+        if email is not None and len(email) > 0:
             if not first:
                 query += " AND"
             else:
@@ -88,17 +88,18 @@ class Experiment(object):
             query += " created <= %s"
             arg_list.append(created_to)
 
-        if sha256 is not None:
+        if sha256 is not None and len(sha256) > 0:
             if not first:
                 query += " AND"
             query += " data_file_sha256 = %s"
+            arg_list.append(sha256)
 
         query += " ORDER BY id"
         if id_ord_desc:
             query += " DESC"
 
         if len(arg_list) == 0:
-            return []
+            return None
 
         with conn.cursor() as c:
             c.execute(query, arg_list)

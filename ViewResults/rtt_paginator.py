@@ -15,7 +15,7 @@ class RTTPaginator(object):
 
     def __init__(self, request, conn, rtt_obj_model,
                  default_item_count=None, near_pages=None,
-                 object_list=None):
+                 object_list=None, url_args=None):
         # Setting defaults
         if default_item_count is not None:
             self.default_item_count = default_item_count
@@ -24,8 +24,13 @@ class RTTPaginator(object):
 
         # Treating address
         self.address = request.path
+        if url_args is not None:
+            self.address += url_args
+
         if self.address.endswith('/'):
             self.address += '?'
+        else:
+            self.address += '&'
 
         # Processing request
         # Page number validation
