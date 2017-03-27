@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.models import User
+import re
 
 
 class AddUserForm(forms.Form):
@@ -24,6 +26,17 @@ class AddUserForm(forms.Form):
     superuser = forms.BooleanField(
         label='Grant superuser rights',
         required=False)
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        check_name_reg = re.compile(r'^[a-zA-Z0-9._-]+$')
+        if check_name_reg.match(username) is None:
+            raise forms.ValidationError("Username can contain only alphanumeric characters and - . _")
+
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("Username {} is already in use.".format(username))
+
+        return username
 
     def clean_password_again(self):
         password = self.cleaned_data.get('password')

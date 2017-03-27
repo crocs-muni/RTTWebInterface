@@ -46,14 +46,6 @@ def add_user(request):
             pwd = form.cleaned_data['password']
             su = form.cleaned_data['superuser']
 
-            if len(User.objects.filter(username=username)) != 0:
-                form.add_error('username', 'Username is taken.')
-                ctx = {
-                    'errors': ['Submitted form was not valid.'],
-                    'form': form,
-                }
-                return render(request, 'Administration/add_user.html', ctx)
-
             if su:
                 user = User.objects.create_superuser(username, email=email, password=pwd)
             else:
@@ -131,3 +123,14 @@ def edit_user(request, user_id):
                 'form': form
             }
             return render(request, 'Administration/edit_user.html', ctx)
+
+
+def list_users(request):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
+    ctx = {
+        'users': User.objects.all()
+    }
+    return render(request, 'Administration/list_users.html', ctx)

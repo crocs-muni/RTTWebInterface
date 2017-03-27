@@ -2,13 +2,13 @@
 
 {% block content %}
 
-    <h2>
+    <h2 style="text-align: left; display: inline">
         {% block title %}Experiments{% endblock %}
     </h2>
 
     {# Items on single page control #}
     {% if paginator.def_item_counts %}
-    <span>
+    <span style="float: right">
         {{ paginator.get_item_count_picker|safe }}
     </span>
     {% endif %}
@@ -27,7 +27,7 @@
                 <br/>
                 {{ form.media }}
                 {% load bootstrap %}
-                <form style="margin: auto; width: 600px" method="post" action="{% url 'ViewResults:index' %}">
+                <form action="{% url 'ViewResults:index' %}">
                     {% csrf_token %}
                     {% if form.non_field_errors %}
                         <ul>
@@ -88,7 +88,7 @@
             </tbody>
         </table>
     {% else %}
-        <h4>Nothing to show.</h4>
+        <h4 style="text-align: center">Nothing to show.</h4>
     {% endif %}
 
     {# Render pagination controls #}
