@@ -1,3 +1,7 @@
-<body>
-<h1>You entered wrong access code. Nice try.</h1>
-</body>
+{% extends 'base_layout.html' %}
+
+{% block title %}Invalid access code{% endblock %}
+
+{% block content %}
+<h2>Access code is not valid.</h2>
+{% endblock %}

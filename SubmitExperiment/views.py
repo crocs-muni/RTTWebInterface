@@ -43,7 +43,7 @@ def get_auth_error(request, access_code):
                 return render(request, 'SubmitExperiment/access_code_bad.html')
         else:
             # Nope, he did not. So kick him out, he has no business here.
-            return render(request, 'login_error.html')
+            return render(request, 'access_denied.html')
     else:
         # User is logged in, everything is okay.
         return None
