@@ -4,30 +4,39 @@ from math import ceil
 class RTTPaginator(object):
     default_page = 1
     default_item_count = 10
+    near_pages = 2
     min_item_count = 1
     # Unsigned big int (2^64)
     max_item_count = 18446744073709551615
-    near_pages = 2
 
     def_item_counts = [
         10, 50, 100, 500, 1000
     ]
 
-    def __init__(self, conn, rtt_obj_model, page, items_per_page, address,
-                 default_item_count=10, near_pages=2):
-        self.default_item_count = default_item_count
-        self.near_pages = near_pages
-        self.address = address
+    def __init__(self, request, conn, rtt_obj_model,
+                 default_item_count=None, near_pages=None,
+                 object_list=None):
+        # Setting defaults
+        if default_item_count is not None:
+            self.default_item_count = default_item_count
+        if near_pages is not None:
+            self.near_pages = near_pages
+
+        # Treating address
+        self.address = request.path
         if self.address.endswith('/'):
             self.address += '?'
 
+        # Processing request
         # Page number validation
+        page = request.GET.get('page', self.default_page)
         try:
             self.page = int(page)
         except ValueError:
             self.page = 1
 
         # Items per page validation
+        items_per_page = request.GET.get('item_count', self.default_item_count)
         try:
             self.items_per_page = int(items_per_page)
         except ValueError:
@@ -37,7 +46,13 @@ class RTTPaginator(object):
         if self.items_per_page > self.max_item_count:
             self.items_per_page = self.max_item_count
 
-        total_items = rtt_obj_model.get_all_count(conn)
+        if object_list is None:
+            # Getting total count from database
+            total_items = rtt_obj_model.get_all_count(conn)
+        else:
+            # We already have the objects
+            total_items = len(object_list)
+
         min_total_page = 1
         max_total_page = int(ceil(total_items / self.items_per_page))
 
@@ -72,9 +87,15 @@ class RTTPaginator(object):
         else:
             self.next = None
 
-        # Fetching objects that will be shown in template
-        self.object_list = rtt_obj_model.get_some(
-            conn, (self.page - 1) * self.items_per_page, self.items_per_page)
+        if object_list is None:
+            # Fetching objects that will be shown in template
+            self.object_list = rtt_obj_model.get_some(
+                conn, (self.page - 1) * self.items_per_page, self.items_per_page)
+        else:
+            # Objects were provided, so just take correct part of them
+            self.object_list = object_list[
+                               (self.page - 1) * self.items_per_page:
+                               (self.page - 1) * self.items_per_page + self.items_per_page]
 
     def get_item_count_picker(self):
         if self.def_item_counts is None:

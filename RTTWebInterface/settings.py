@@ -35,7 +35,9 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'ViewResults.apps.ViewresultsConfig',
     'SubmitExperiment.apps.SubmitexperimentConfig',
+    'bootstrap3',
     'bootstrapform',
+    'datetimewidget',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

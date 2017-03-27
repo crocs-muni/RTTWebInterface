@@ -42,6 +42,67 @@ class Experiment(object):
         with conn.cursor() as c:
             c.execute(select_stmt, (offset, count, ))
             if c.rowcount == 0:
+                return []
+            return map_db_rows_to_objects(c.fetchall(), Experiment)
+
+    @staticmethod
+    def get_all_filtered(conn, *args, **kwargs) -> ['Experiment']:
+        first = True
+        arg_list = []
+
+        id_ord_desc = kwargs.pop('id_ord_desc', True)
+        name = kwargs.pop('name')
+        email = kwargs.pop('email')
+        created_from = kwargs.pop('created_from')
+        created_to = kwargs.pop('create_to')
+        sha256 = kwargs.pop('sha256')
+
+        # Building the query
+        query = "SELECT * FROM {} WHERE".format(Experiment.table_name)
+        if name is not None:
+            first = False
+            query += " name LIKE %%s%"
+            arg_list.append(name)
+
+        if email is not None:
+            if not first:
+                query += " AND"
+            else:
+                first = False
+            query += " email == %s"
+            arg_list.append(email)
+
+        if created_from is not None:
+            if not first:
+                query += " AND"
+            else:
+                first = False
+            query += " created >= %s"
+            arg_list.append(created_from)
+
+        if created_to is not None:
+            if not first:
+                query += " AND"
+            else:
+                first = False
+            query += " created <= %s"
+            arg_list.append(created_to)
+
+        if sha256 is not None:
+            if not first:
+                query += " AND"
+            query += " data_file_sha256 == %s"
+
+        query += " ORDER BY id"
+        if id_ord_desc:
+            query += " DESC"
+
+        if len(arg_list) == 0:
+            return []
+
+        with conn.cursor() as c:
+            c.execute(query, arg_list)
+            if c.rowcount == 0:
                 return None
             return map_db_rows_to_objects(c.fetchall(), Experiment)
 

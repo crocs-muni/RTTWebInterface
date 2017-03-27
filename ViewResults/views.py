@@ -9,15 +9,45 @@ from .forms import FilterExperimentsForm
 # Create your views here.
 def index(request):
     c = connections['rtt-database']
-    page = request.GET.get('page', RTTPaginator.default_page)
-    item_count = request.GET.get('item_count', RTTPaginator.default_item_count)
-    pag = RTTPaginator(c, Experiment, page, item_count, reverse('ViewResults:index'))
-    # pag.def_item_counts = None
-    ctx = {
-        'paginator': pag,
-        'form': FilterExperimentsForm()
-    }
-    return render(request, 'ViewResults/index.html', ctx)
+    if request.method != 'POST':
+        ctx = {
+            'paginator': RTTPaginator(request, c, Experiment),
+            'form': FilterExperimentsForm()
+        }
+        return render(request, 'ViewResults/index.html', ctx)
+    else:
+        form = FilterExperimentsForm(request.POST)
+        if not form.is_valid():
+            ctx = {
+                'paginator': RTTPaginator(request, c, Experiment),
+                'form': form,
+            }
+            return render(request, 'ViewResults/index.html', ctx)
+        else:
+            name_filter = form.cleaned_data['name_filter']
+            if name_filter == '':
+                name_filter = None
+            sha256_filter = form.cleaned_data['sha256_filter']
+            if sha256_filter == '':
+                sha256_filter = None
+            only_own = form.cleaned_data['only_own']
+            if only_own and request.user.is_authenticated:
+                email_filter = request.user.email
+            else:
+                email_filter = None
+            date_filter_from = form.cleaned_data['date_filter_from']
+            date_filter_to = form.cleaned_data['date_filter_to']
+            object_list = Experiment.get_all_filtered(c,
+                                                      name=name_filter,
+                                                      sha256=sha256_filter,
+                                                      email=email_filter,
+                                                      created_from=date_filter_from,
+                                                      create_to=date_filter_to)
+            ctx = {
+                'paginator': RTTPaginator(request, c, Experiment, object_list=object_list),
+                'form': form,
+            }
+            return render(request, 'ViewResults/index.html', ctx)
 
 
 def experiment(request, experiment_id):

@@ -14,9 +14,17 @@
     {% endif %}
 
     {# Filtering results #}
+    {{ form.media }}
+    {% load bootstrap %}
     <form method="post" action="{% url 'ViewResults:index' %}">
         {% csrf_token %}
-        {% load bootstrap %}
+        {% if form.non_field_errors %}
+            <ul>
+                {% for m in form.non_field_errors %}
+                    <li><p class="text-danger">{{ m }}</p></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
         {{ form|bootstrap }}
 
         <div class="form-group">
