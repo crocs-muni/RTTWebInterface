@@ -1,0 +1,36 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+    <h2 style="text-align: left; display: inline">
+        {% block title %}Edit configuration{% endblock %}
+    </h2>
+    <span style="float: right">
+        <a href="{% url 'Administration:list_predefined_configurations' %}" class="btn btn-default">
+            All configurations
+        </a>
+    </span>
+    <br/><br/>
+
+    {% include 'messages.html' %}
+
+    {% load bootstrap %}
+    <form method="post" action="{% url 'Administration:edit_predefined_configuration' pc.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <ul>
+                {% for m in form.non_field_errors %}
+                    <li><p class="text-danger">{{ m }}</p></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {{ form|bootstrap }}
+        <br/>
+        <div class="form-group">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a href="{% url 'Administration:delete_predefined_configuration' pc.id %}" class="btn btn-danger">Delete configuration</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}

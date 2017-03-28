@@ -151,6 +151,8 @@ class AddPredefinedConfiguration(forms.Form):
         if PredefinedConfiguration.objects.filter(name=name).exists():
             raise forms.ValidationError("Name must be unique.")
 
+        return name
+
 
 class EditPredefinedConfiguration(forms.Form):
     name = forms.CharField(
@@ -162,7 +164,7 @@ class EditPredefinedConfiguration(forms.Form):
         label="Configuration file")
 
     def __init__(self, *args, **kwargs):
-        pc = kwargs.pop('conf')
+        pc = kwargs.pop('pc')
         super(EditPredefinedConfiguration, self).__init__(*args, **kwargs)
         self.id = pc.id
         self.fields['name'].initial = pc.name
@@ -175,4 +177,6 @@ class EditPredefinedConfiguration(forms.Form):
 
         if PredefinedConfiguration.objects.filter(name=name).exclude(id=self.id).exists():
             raise forms.ValidationError("Name must be unique.")
+
+        return name
 
