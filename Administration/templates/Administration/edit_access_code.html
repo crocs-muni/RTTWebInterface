@@ -11,14 +11,7 @@
     </span>
     <br/><br/>
 
-    {% if errors %}
-        <div class="alert alert-danger">
-            {% for m in errors %}
-                <strong>Error: </strong>{{ m }}<br/>
-            {% endfor %}
-        </div>
-        <br/>
-    {% endif %}
+    {% include 'messages.html' %}
 
     {% load bootstrap %}
     {{ form.media }}

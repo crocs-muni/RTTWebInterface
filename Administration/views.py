@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib import messages
 from .forms import *
 from django.http import Http404
 from SubmitExperiment.models import *
@@ -40,11 +41,8 @@ def add_user(request):
     else:
         form = AddUserForm(request.POST)
         if not form.is_valid():
-            ctx = {
-                'errors': ['Submitted form was not valid.'],
-                'form': form,
-            }
-            return render(request, 'Administration/add_user.html', ctx)
+            messages.error(request, 'Submitted form was not valid.')
+            return render(request, 'Administration/add_user.html', {'form': form})
         else:
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
@@ -62,11 +60,8 @@ def add_user(request):
             user.last_name = last_name
             user.save()
 
-            ctx = {
-                'success': ['User {} was created.'.format(username)],
-                'form': AddUserForm(),
-            }
-            return render(request, 'Administration/add_user.html', ctx)
+            messages.success(request, 'User {} was created.'.format(username))
+            return redirect('Administration:list_users')
 
 
 def delete_user(request, user_id):
@@ -80,13 +75,12 @@ def delete_user(request, user_id):
         raise Http404("No such user.")
 
     if request.method != 'POST':
-        ctx = {
-            'u': user
-        }
-        return render(request, 'Administration/delete_user.html', ctx)
+        return render(request, 'Administration/delete_user.html', {'u': user})
     else:
+        username = user.username
         user.delete()
-        return redirect('Administration:index')
+        messages.success(request, 'User {} was deleted.'.format(username))
+        return redirect('Administration:list_users')
 
 
 def edit_user(request, user_id):
@@ -110,9 +104,9 @@ def edit_user(request, user_id):
         if not form.is_valid():
             ctx = {
                 'u': user,
-                'errors': ['Submitted form was not valid.'],
                 'form': form,
             }
+            messages.error(request, 'Submitted form was not valid.')
             return render(request, 'Administration/edit_user.html', ctx)
         else:
             pwd = form.cleaned_data['password']
@@ -124,12 +118,8 @@ def edit_user(request, user_id):
             user.last_name = form.cleaned_data['last_name']
             user.is_superuser = form.cleaned_data['superuser']
             user.save()
-            ctx = {
-                'u': user,
-                'success': ['User {} was modified.'.format(user.username)],
-                'form': form
-            }
-            return render(request, 'Administration/edit_user.html', ctx)
+            messages.success(request, 'User {} was modified.'.format(user.username))
+            return redirect('Administration:list_users')
 
 
 def list_users(request):
@@ -163,11 +153,8 @@ def add_access_code(request):
     else:
         form = AddAccessCodeForm(request.POST)
         if not form.is_valid():
-            ctx = {
-                'errors': ['Submitted form was not valid.'],
-                'form': form,
-            }
-            return render(request, 'Administration/add_access_code.html', ctx)
+            messages.error(request, 'Submitted form was not valid.')
+            return render(request, 'Administration/add_access_code.html', {'form': form})
         else:
             description = form.cleaned_data['description']
             valid_until = form.cleaned_data['valid_until']
@@ -181,6 +168,7 @@ def add_access_code(request):
                             valid_until=valid_until,
                             access_code=code)
             ac.save()
+            messages.success(request, 'Access code {} was created.'.format(ac.id))
             return redirect('Administration:list_access_codes')
 
 
@@ -194,7 +182,9 @@ def delete_access_code(request, access_code_id):
     except AccessCode.DoesNotExist:
         raise Http404("No such access code.")
 
+    ac_id = ac.id
     ac.delete()
+    messages.success(request, 'Access code {} was deleted.'.format(ac_id))
     return redirect('Administration:list_access_codes')
 
 
@@ -217,9 +207,9 @@ def edit_access_code(request, access_code_id):
     else:
         form = EditAccessCodeForm(request.POST, access_code=ac)
         if not form.is_valid():
+            messages.error(request, 'Submitted form was not valid.')
             ctx = {
                 'ac': ac,
-                'errors': ['Submitted form was not valid.'],
                 'form': form,
             }
             return render(request, 'Administration/edit_access_code.html', ctx)
@@ -228,12 +218,8 @@ def edit_access_code(request, access_code_id):
             ac.valid_until = form.cleaned_data['valid_until']
             ac.access_code = form.cleaned_data['access_code']
             ac.save()
-            ctx = {
-                'ac': ac,
-                'success': ['Access code {} was modified.'.format(ac.id)],
-                'form': form,
-            }
-            return render(request, 'Administration/edit_access_code.html', ctx)
+            messages.success(request, 'Access code {} was modified.'.format(ac.id))
+            return redirect('Administration:list_access_codes')
 
 
 def list_access_codes(request):

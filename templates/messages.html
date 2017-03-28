@@ -1,0 +1,22 @@
+
+{% if messages %}
+    {% for m in messages %}
+        {% if m.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+        <div class="alert alert-info">
+            <strong>Info: </strong>{{ m }}<br/>
+        </div>
+        {% elif m.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success">
+            <strong>Success: </strong>{{ m }}<br/>
+        </div>
+        {% elif m.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+        <div class="alert alert-warning">
+            <strong>Warning: </strong>{{ m }}<br/>
+        </div>
+        {% else %}
+        <div class="alert alert-danger">
+            <strong>Error: </strong>{{ m }}<br/>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}

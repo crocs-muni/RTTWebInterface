@@ -2,42 +2,9 @@
 
 {% block content %}
     <h2>{% block title %}Submit experiment{% endblock %}</h2>
-    <br/>
+    <br/><br/>
 
-    {% if messages.warnings %}
-        <div class="alert alert-warning">
-            {% for m in messages.warnings %}
-                <strong>Warning: </strong>{{ m }}<br/>
-            {% endfor %}
-        </div>
-        <br/>
-    {% endif %}
-
-    {% if messages.errors %}
-        <div class="alert alert-danger">
-            {% for m in messages.errors %}
-                <strong>Error: </strong>{{ m }}<br/>
-            {% endfor %}
-        </div>
-        <br/>
-    {% endif %}
-
-    {% if messages.info %}
-        <div class="alert alert-info">
-            {% for m in messages.info %}
-                <strong>Info: </strong>{{ m }}<br/>
-            {% endfor %}
-        </div>
-        <br/>
-    {% endif%}
-
-    {% if messages.success %}
-        <div class="alert alert-success">
-            {% for m in messages.success %}
-                <strong>Success: </strong>{{ m }}<br/>
-            {% endfor %}
-        </div>
-    {% endif %}
+    {% include 'messages.html' %}
 
     {% load bootstrap %}
     <form method="post" enctype="multipart/form-data" action="{% url 'SubmitExperiment:index' %}{% if access_code %}{{ access_code }}{% endif %}">

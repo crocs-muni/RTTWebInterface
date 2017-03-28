@@ -11,14 +11,7 @@
     </span>
     <br/><br/>
 
-    {% if success %}
-        <div class="alert alert-success">
-            {% for m in success %}
-                <strong>Success: </strong>{{ m }}<br/>
-            {% endfor %}
-        </div>
-        <br/>
-    {% endif %}
+    {% include 'messages.html' %}
 
     {% if access_codes %}
         <table class="table table-striped table-hover">

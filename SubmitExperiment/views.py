@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.contrib import messages
 
 from .forms import ExperimentForm
 from .models import PredefinedConfiguration
@@ -99,20 +100,12 @@ def index(request, access_code=None):
         }
         return render(request, 'SubmitExperiment/index.html', ctx)
     else:
-        # Object that will be passed into the context
-        messages = SimpleNamespace()
-        messages.info = []
-        messages.success = []
-        messages.warnings = []
-        messages.errors = []
-
         # Validate form and submit experiment
         form = ExperimentForm(request.POST, request.FILES)
         if not form.is_valid():
-            messages.errors.append('Submitted form was not valid.')
-            messages.info.append('Please fix the errors and try again.')
+            messages.error(request, 'Submitted form was not valid.')
+            messages.info(request, 'Please fix the errors and try again.')
             ctx = {
-                'messages': messages,
                 'access_code': access_code,
                 'form': form,
             }
@@ -134,11 +127,11 @@ def index(request, access_code=None):
 
                 if last_leq_id is None:
                     last_leq_id = config_list[0].id
-                    messages.warnings.append("Provided file is too small for all configurations.")
+                    messages.warning(request, "Provided file is too small for all configurations.")
 
                 chosen_cfg = PredefinedConfiguration.objects.get(id=last_leq_id)
-                messages.info.append("Best possible configuration was chosen and requires {} bytes."
-                                     .format(chosen_cfg.required_bytes))
+                messages.info(request, "Best possible configuration was chosen and requires {} bytes."
+                              .format(chosen_cfg.required_bytes))
                 cfg_file = chosen_cfg.cfg_file
 
             elif form.cleaned_data['choose_cfg'] is not None:
@@ -146,10 +139,10 @@ def index(request, access_code=None):
                 cfg = PredefinedConfiguration.objects.get(id=form.cleaned_data['choose_cfg'].id)
                 cfg_file = cfg.cfg_file
                 if in_file.size < cfg.required_bytes:
-                    messages.warnings.append("Your file is smaller than "
-                                             "recommended file size for chosen configuration.")
-                    messages.warnings.append("Recommended file size: {} bytes".format(cfg.required_bytes))
-                    messages.warnings.append("Size of provided file: {} bytes".format(in_file.size))
+                    messages.warning(request, "Your file is smaller than"
+                                              "recommended file size for chosen configuration.")
+                    messages.warning(request, "Recommended file size: {} bytes".format(cfg.required_bytes))
+                    messages.warning(request, "Size of provided file: {} bytes".format(in_file.size))
             else:
                 # User provided his own configuration
                 cfg_file = request.FILES['own_cfg']
@@ -165,9 +158,8 @@ def index(request, access_code=None):
             except BaseException as e:
                 print('Could not start a thread: {}'.format(e))
 
-            messages.success.append('Experiment \"{}\" was created.'.format(form.cleaned_data['exp_name']))
+            messages.success(request, 'Experiment \"{}\" was created.'.format(form.cleaned_data['exp_name']))
             ctx = {
-                'messages': messages,
                 'access_code': access_code,
                 'form': ExperimentForm(),
             }
