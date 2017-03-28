@@ -8,7 +8,11 @@ class ExperimentForm(forms.Form):
     exp_name = forms.CharField(
         label='Experiment name',
         max_length=255)
-    in_file = forms.FileField(label='Input file for batteries')
+    author_email = forms.EmailField(
+        label='E-Mail',
+        required=False)
+    in_file = forms.FileField(
+        label='Input file for batteries')
 
     # Configuration fields
     default_cfg = forms.BooleanField(

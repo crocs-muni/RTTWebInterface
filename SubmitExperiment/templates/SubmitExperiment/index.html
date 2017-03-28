@@ -7,7 +7,7 @@
     {% include 'messages.html' %}
 
     {% load bootstrap %}
-    <form method="post" enctype="multipart/form-data" action="{% url 'SubmitExperiment:index' %}{% if access_code %}{{ access_code }}{% endif %}">
+    <form method="post" enctype="multipart/form-data" action="{% url 'SubmitExperiment:index' %}">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <ul>
@@ -20,6 +20,9 @@
         <fieldset>
             <legend>General</legend>
             {{ form.exp_name|bootstrap }}
+            {% if not user.is_authenticated %}
+                {{ form.author_email|bootstrap }}
+            {% endif %}
             {{ form.in_file|bootstrap }}
         </fieldset>
 

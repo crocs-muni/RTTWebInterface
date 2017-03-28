@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib import messages
@@ -22,12 +22,13 @@ SUBMIT_EXPERIMENT_BINARY = 'SubmitExperiment/submit_binary/submit_experiment'
 # access code (if any) is checked. If this function
 # returns anything other than None it is rendered
 # appropriate error page and authentication failed.
-def get_auth_error(request, access_code):
+def get_auth_error(request):
     # Is user authenticated?
     if not request.user.is_authenticated:
-        # User is not logged in. But maybe he gave us access code?
+        # User is not logged in. But maybe he has stored access code in session?
+        access_code = request.session.get('access_code', None)
         if access_code is not None:
-            # Yup, he did. Let's check it.
+            # Yup, he has. Let's check it.
             try:
                 # Is the code even in the database?
                 ac = AccessCode.objects.get(access_code=access_code)
@@ -36,14 +37,14 @@ def get_auth_error(request, access_code):
                     # No it is not. Get out.
                     return render(request, 'SubmitExperiment/access_code_expired.html')
 
-                # Okay, he provided correct code that is still valid, let him in.
+                # Okay, he has stored correct code that is still valid, let him in.
                 return None
 
             except AccessCode.DoesNotExist:
                 # Wrong code, sorry buddy.
                 return render(request, 'SubmitExperiment/access_code_bad.html')
         else:
-            # Nope, he did not. So kick him out, he has no business here.
+            # Nope, he has not. So kick him out, he has no business here.
             return render(request, 'access_denied.html')
     else:
         # User is logged in, everything is okay.
@@ -84,31 +85,32 @@ def submit_experiment(form, email, in_file_path, cfg_file_path):
     os.remove(cfg_file_path)
 
 
+# Sole purpose of this view is to save access code into
+# session.
+# Code will be verified when accessing index (so after redirect)
+def gain_access(request, access_code):
+    request.session['access_code'] = access_code
+    return redirect('SubmitExperiment:index')
+
+
 # Create your views here.
-def index(request, access_code=None):
+def index(request):
     # Authentication
-    auth_error = get_auth_error(request, access_code)
+    auth_error = get_auth_error(request)
     if auth_error is not None:
         return auth_error
 
     # Finally process the request
     if request.method != 'POST':
         # Render the form
-        ctx = {
-            'access_code': access_code,
-            'form': ExperimentForm()
-        }
-        return render(request, 'SubmitExperiment/index.html', ctx)
+        return render(request, 'SubmitExperiment/index.html', {'form': ExperimentForm()})
     else:
         # Validate form and submit experiment
         form = ExperimentForm(request.POST, request.FILES)
         if not form.is_valid():
             messages.error(request, 'Submitted form was not valid.')
             messages.info(request, 'Please fix the errors and try again.')
-            ctx = {
-                'access_code': access_code,
-                'form': form,
-            }
+            return render(request, 'SubmitExperiment/index.html', {'form': form})
         else:
             in_file = request.FILES['in_file']
 
@@ -150,7 +152,11 @@ def index(request, access_code=None):
             fs = FileSystemStorage()
             in_file_path = fs.path(fs.save(in_file.name, in_file))
             cfg_file_path = fs.path(fs.save(cfg_file.name, cfg_file))
-            email = request.user.email
+
+            if request.user.is_authenticated:
+                email = request.user.email
+            else:
+                email = form.cleaned_data['author_email']
 
             try:
                 _thread.start_new_thread(submit_experiment,
@@ -159,8 +165,4 @@ def index(request, access_code=None):
                 print('Could not start a thread: {}'.format(e))
 
             messages.success(request, 'Experiment \"{}\" was created.'.format(form.cleaned_data['exp_name']))
-            ctx = {
-                'access_code': access_code,
-                'form': ExperimentForm(),
-            }
-        return render(request, 'SubmitExperiment/index.html', ctx)
+            return redirect('SubmitExperiment:index')

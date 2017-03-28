@@ -42,7 +42,7 @@
                             Link
                         </th >
                         <td colspan="4" style="padding-bottom: 30px">
-                            <textarea title="Link" class="form-control" rows="1" id="ac_{{ ac.id }}" readonly="readonly">{{ request.get_host }}{% url 'SubmitExperiment:index' ac.access_code %}</textarea>
+                            <textarea title="Link" class="form-control" rows="1" id="ac_{{ ac.id }}" readonly="readonly">{{ request.get_host }}{% url 'SubmitExperiment:gain_access' ac.access_code %}</textarea>
                         </td>
                     </tr>
                 {% endfor %}
