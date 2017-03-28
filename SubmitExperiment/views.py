@@ -145,7 +145,7 @@ def index(request):
         cfg_file = cfg.cfg_file
         if in_file.size < cfg.required_bytes:
             messages.warning(request, "Your file is smaller than"
-                                      "recommended file size for chosen configuration.")
+                                      " recommended file size for chosen configuration.")
             messages.warning(request, "Recommended file size: {} bytes".format(cfg.required_bytes))
             messages.warning(request, "Size of provided file: {} bytes".format(in_file.size))
     else:
