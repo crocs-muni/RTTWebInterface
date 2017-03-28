@@ -1,23 +1,20 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
-    <h2>
+    <h2 style="text-align: left; display: inline">
         {% block title %}Edit user {{ u.username }}{% endblock %}
     </h2>
-    <br/>
+    <span style="float: right">
+        <a href="{% url 'Administration:list_users' %}" class="btn btn-default">
+            All users
+        </a>
+    </span>
+    <br/><br/>
+
     {% if errors %}
         <div class="alert alert-danger">
             {% for m in errors %}
                 <strong>Error: </strong>{{ m }}<br/>
-            {% endfor %}
-        </div>
-        <br/>
-    {% endif %}
-
-    {% if success %}
-        <div class="alert alert-success">
-            {% for m in success %}
-                <strong>Success: </strong>{{ m }}<br/>
             {% endfor %}
         </div>
         <br/>

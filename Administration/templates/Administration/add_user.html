@@ -1,18 +1,15 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
-    <h2>
-    {% block title %}Add user{% endblock %}
+    <h2 style="text-align: left; display: inline">
+        {% block title %}Add user{% endblock %}
     </h2>
-    <br/>
-    {% if success %}
-        <div class="alert alert-success">
-            {% for m in success %}
-                <strong>Success: </strong>{{ m }}<br/>
-            {% endfor %}
-        </div>
-        <br/>
-    {% endif %}
+    <span style="float: right">
+        <a href="{% url 'Administration:list_users' %}" class="btn btn-default">
+            All users
+        </a>
+    </span>
+    <br/><br/>
 
     {% if errors %}
         <div class="alert alert-danger">
