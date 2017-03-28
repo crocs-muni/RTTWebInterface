@@ -1,0 +1,41 @@
+{% extends 'base_layout.html' %}
+
+{% block content %}
+    <h2>{% block title %}All access codes{% endblock %}</h2>
+    <br/><br/>
+    {% if access_codes %}
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Description</th>
+                    <th>Valid until</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ac in access_codes %}
+                    <tr>
+                        <td>{{ ac.id }}</td>
+                        <td>{{ ac.description }}</td>
+                        <td>{{ ac.valid_until }}</td>
+                        <td>
+                            <a href="{% url 'Administration:edit_access_code' ac.id %}" class="btn btn-primary">
+                                Details
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nothing to show.</p>
+    {% endif %}
+
+    <script>
+        function copier(){
+            document.getElementById('myText').select();
+            document.execCommand('copy');
+        }
+    </script>
+
+{% endblock %}

@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
+from datetimewidget.widgets import DateTimeWidget
+from SubmitExperiment.models import *
 import re
 
 
@@ -87,4 +89,90 @@ class EditUserForm(forms.Form):
             raise forms.ValidationError('Passwords do not match.')
 
         return password_again
+
+
+class AddAccessCodeForm(forms.Form):
+    description = forms.CharField(
+        max_length=150)
+    valid_until = forms.DateTimeField(
+        label='Access code will be valid until',
+        widget=DateTimeWidget(
+            attrs={'id': "valid_until"},
+            usel10n=True,
+            bootstrap_version=3))
+
+
+class EditAccessCodeForm(forms.Form):
+    description = forms.CharField(
+        max_length=150)
+    valid_until = forms.DateTimeField(
+        label='Access code will be valid until',
+        widget=DateTimeWidget(
+            attrs={'id': "valid_until"},
+            usel10n=True,
+            bootstrap_version=3))
+    access_code = forms.CharField(
+        label='Access code',
+        max_length=64)
+
+    def __init__(self, *args, **kwargs):
+        ac = kwargs.pop('access_code')
+        super(EditAccessCodeForm, self).__init__(*args, **kwargs)
+        self.id = ac.id
+        self.fields['description'].initial = ac.description
+        self.fields['valid_until'].initial = ac.valid_until
+        self.fields['access_code'].initial = ac.access_code
+
+    def clean_access_code(self):
+        access_code = self.cleaned_data.get('access_code')
+        check_ac_reg = re.compile(r'^[a-zA-Z0-9]+$')
+
+        if check_ac_reg.match(access_code) is None:
+            raise forms.ValidationError("Access code can contain only alphanumeric characters.")
+
+        if AccessCode.objects.filter(access_code=access_code).exclude(id=self.id).exists():
+            raise forms.ValidationError("Access code must be unique.")
+
+        return access_code
+
+
+class AddPredefinedConfiguration(forms.Form):
+    name = forms.CharField(
+        max_length=100)
+    required_bytes = forms.IntegerField()
+    description = forms.CharField(
+        max_length=1000)
+    cfg_file = forms.FileField(
+        label="Configuration file")
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+
+        if PredefinedConfiguration.objects.filter(name=name).exists():
+            raise forms.ValidationError("Name must be unique.")
+
+
+class EditPredefinedConfiguration(forms.Form):
+    name = forms.CharField(
+        max_length=100)
+    required_bytes = forms.IntegerField()
+    description = forms.CharField(
+        max_length=1000)
+    cfg_file = forms.FileField(
+        label="Configuration file")
+
+    def __init__(self, *args, **kwargs):
+        pc = kwargs.pop('conf')
+        super(EditPredefinedConfiguration, self).__init__(*args, **kwargs)
+        self.id = pc.id
+        self.fields['name'].initial = pc.name
+        self.fields['required_bytes'].initial = pc.required_bytes
+        self.fields['description'].initial = pc.description
+        self.fields['cfg_file'].initial = pc.cfg_file
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+
+        if PredefinedConfiguration.objects.filter(name=name).exclude(id=self.id).exists():
+            raise forms.ValidationError("Name must be unique.")
 
