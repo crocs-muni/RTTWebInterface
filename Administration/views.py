@@ -181,11 +181,7 @@ def add_access_code(request):
                             valid_until=valid_until,
                             access_code=code)
             ac.save()
-            ctx = {
-                'success': ['Access code {} was created.'.format(ac.id)],
-                'form': AddAccessCodeForm()
-            }
-            return render(request, 'Administration/add_access_code.html', ctx)
+            return redirect('Administration:list_access_codes')
 
 
 def delete_access_code(request, access_code_id):
@@ -246,6 +242,6 @@ def list_access_codes(request):
         return auth_error
 
     ctx = {
-        'access_codes': AccessCode.objects.all(),
+        'access_codes': AccessCode.objects.all().order_by('-valid_until'),
     }
     return render(request, 'Administration/list_access_codes.html', ctx)
