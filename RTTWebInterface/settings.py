@@ -16,9 +16,11 @@ import configparser
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
+
+# Path to binary for submitting experiments to rtt server infrastructure
+SUBMIT_EXP_BINARY = os.path.join(BASE_DIR, 'SubmitExperiment/submit_binary/submit_experiment')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 with open(os.path.join(BASE_DIR, "credentials/secret_key")) as f:

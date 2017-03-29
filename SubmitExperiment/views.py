@@ -13,10 +13,6 @@ import shlex
 import os
 import _thread
 
-# Path to submit_experiment executable relative
-# to root directory of Django project
-SUBMIT_EXPERIMENT_BINARY = 'SubmitExperiment/submit_binary/submit_experiment'
-
 
 # Checks whether user is authenticated. If he is not,
 # access code (if any) is checked. If this function
@@ -52,7 +48,7 @@ def get_auth_error(request):
 
 
 def submit_experiment(form, email, in_file_path, cfg_file_path):
-    args_str = os.path.abspath(SUBMIT_EXPERIMENT_BINARY)
+    args_str = settings.SUBMIT_EXP_BINARY
     if form.cleaned_data['batt_sts']:
         args_str += ' --nist_sts '
     if form.cleaned_data['batt_die']:
