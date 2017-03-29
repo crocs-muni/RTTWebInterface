@@ -30,5 +30,4 @@ urlpatterns = [
     url(r'^ViewResults/', include('ViewResults.urls')),
     url(r'^SubmitExperiment/', include('SubmitExperiment.urls')),
     url(r'Administration/', include('Administration.urls')),
-    url(r'^admin/', admin.site.urls),
 ]

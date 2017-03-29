@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'bootstrap3',
     'bootstrapform',
     'datetimewidget',
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
