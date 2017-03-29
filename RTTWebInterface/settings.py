@@ -96,7 +96,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': default_db_cred.get('Credentials', 'Name'),
-        'USER': default_db_cred.get('Credentials', 'User'),
+        'USER': default_db_cred.get('Credentials', 'Username'),
         'PASSWORD': default_db_cred.get('Credentials', 'Password'),
         'HOST': default_db_cred.get('Credentials', 'Host'),
         'PORT': default_db_cred.get('Credentials', 'Port'),
@@ -104,7 +104,7 @@ DATABASES = {
     'rtt-database': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': rtt_db_cred.get('Credentials', 'Name'),
-        'USER': rtt_db_cred.get('Credentials', 'User'),
+        'USER': rtt_db_cred.get('Credentials', 'Username'),
         'PASSWORD': rtt_db_cred.get('Credentials', 'Password'),
         'HOST': rtt_db_cred.get('Credentials', 'Host'),
         'PORT': rtt_db_cred.get('Credentials', 'Port'),
