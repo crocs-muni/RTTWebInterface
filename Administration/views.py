@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from django.contrib import messages
 from .forms import *
 from django.http import Http404
@@ -109,8 +110,22 @@ def edit_user(request, u_id):
         messages.error(request, 'Submitted form was not valid.')
         return render(request, 'Administration/edit_user.html', ctx)
 
+    # Password validation in here not in form. In form
+    # I don't know whether the pwd was changed or not.
     pwd = form.cleaned_data['password']
     if pwd is not None and len(pwd) > 0:
+        try:
+            validate_password(pwd)
+        except forms.ValidationError as errors:
+            for e in errors.messages:
+                form.add_error('password', "{}".format(e))
+            ctx = {
+                'u': user,
+                'form': form,
+            }
+            messages.error(request, 'Submitted form was not valid.')
+            return render(request, 'Administration/edit_user.html', ctx)
+
         user.set_password(pwd)
 
     user.email = form.cleaned_data['email']

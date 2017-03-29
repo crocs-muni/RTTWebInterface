@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from datetimewidget.widgets import DateTimeWidget
+from django.contrib.auth.password_validation import validate_password
 from SubmitExperiment.models import *
 import re
 
@@ -40,10 +41,18 @@ class AddUserForm(forms.Form):
 
         return username
 
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if password is None:
+            raise forms.ValidationError('This field is required.')
+
+        validate_password(password)
+        return password
+
     def clean_password_again(self):
         password = self.cleaned_data.get('password')
         password_again = self.cleaned_data.get('password_again')
-        if not password_again:
+        if password_again is None:
             raise forms.ValidationError('This field is required.')
         if password != password_again:
             raise forms.ValidationError('Passwords do not match.')
@@ -85,6 +94,8 @@ class EditUserForm(forms.Form):
     def clean_password_again(self):
         password = self.cleaned_data.get('password')
         password_again = self.cleaned_data.get('password_again')
+        if password_again is None:
+            raise forms.ValidationError('This field is required.')
         if password != password_again:
             raise forms.ValidationError('Passwords do not match.')
 

@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.password_validation import validate_password
 
 
 class LoginForm(forms.Form):
@@ -13,7 +14,7 @@ class LoginForm(forms.Form):
 class PasswordChangeForm(forms.Form):
     old_pwd = forms.CharField(
         label="Current password",
-        widget=forms.PasswordInput())
+        widget=forms.PasswordInput(attrs={'autofocus': '1'}))
     new_pwd = forms.CharField(
         label="New password",
         widget=forms.PasswordInput())
@@ -21,10 +22,18 @@ class PasswordChangeForm(forms.Form):
         label="New password again",
         widget=forms.PasswordInput())
 
+    def clean_new_pwd(self):
+        new_pwd = self.cleaned_data.get('new_pwd')
+        if new_pwd is None:
+            raise forms.ValidationError('This field is required')
+
+        validate_password(new_pwd)
+        return new_pwd
+
     def clean_new_pwd_again(self):
         new_pwd = self.cleaned_data.get('new_pwd')
         new_pwd_again = self.cleaned_data.get('new_pwd_again')
-        if not new_pwd_again:
+        if new_pwd_again is None:
             raise forms.ValidationError('This field is required.')
         if new_pwd != new_pwd_again:
             raise forms.ValidationError('Passwords do not match.')
