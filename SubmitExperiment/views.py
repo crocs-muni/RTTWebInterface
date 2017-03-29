@@ -114,6 +114,19 @@ def index(request):
         messages.info(request, 'Please fix the errors and try again.')
         return render(request, 'SubmitExperiment/index.html', {'form': form})
 
+    # I shouldn't be validating fields here, but in form
+    # I can't know whether user is logged in or not
+    if request.user.is_authenticated:
+        email = request.user.email
+    else:
+        email = form.cleaned_data['author_email']
+
+    if email is None or len(email) == 0:
+        messages.error(request, 'Submitted form was not valid.')
+        messages.info(request, 'Please fix the errors and try again.')
+        form.add_error('author_email', 'This field is required.')
+        return render(request, 'SubmitExperiment/index.html', {'form': form})
+
     # Form is valid here, continue
     in_file = request.FILES['in_file']
 
@@ -155,11 +168,6 @@ def index(request):
     fs = FileSystemStorage()
     in_file_path = fs.path(fs.save(in_file.name, in_file))
     cfg_file_path = fs.path(fs.save(cfg_file.name, cfg_file))
-
-    if request.user.is_authenticated:
-        email = request.user.email
-    else:
-        email = form.cleaned_data['author_email']
 
     try:
         _thread.start_new_thread(submit_experiment,

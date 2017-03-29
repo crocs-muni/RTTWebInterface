@@ -16,7 +16,7 @@ urlpatterns = [
         name='add_access_code'),
     url(r'^DeleteAccessCode/(?P<a_c_id>[0-9]+)/$', views.delete_access_code,
         name='delete_access_code'),
-    url(r'^EditAccessCode/(?P<c_c_id>[0-9]+)/$', views.edit_access_code,
+    url(r'^EditAccessCode/(?P<a_c_id>[0-9]+)/$', views.edit_access_code,
         name='edit_access_code'),
     url(r'^ListAccessCodes/$', views.list_access_codes,
         name='list_access_codes'),
