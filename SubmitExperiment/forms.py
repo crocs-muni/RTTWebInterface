@@ -29,6 +29,9 @@ class ExperimentForm(forms.Form):
     own_cfg = forms.FileField(
         label='Configuration file (advanced user)',
         required=False,
+        help_text="For configuration file description read our "
+                  "<a href=https://github.com/"
+                  "crocs-muni/randomness-testing-toolkit/wiki/Battery-execution-configuration>wiki</a>.",
         widget=forms.FileInput(attrs={'onchange': 'confDisable();'}))
 
     # Battery fields

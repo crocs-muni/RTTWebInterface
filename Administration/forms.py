@@ -22,6 +22,7 @@ class AddUserForm(forms.Form):
         required=False)
     password = forms.CharField(
         label='Password',
+        help_text="At least 9 characters with at least 1 letter.",
         widget=forms.PasswordInput())
     password_again = forms.CharField(
         label='Password again',
@@ -73,6 +74,7 @@ class EditUserForm(forms.Form):
         required=False)
     password = forms.CharField(
         label='Set new password',
+        help_text="At least 9 characters with at least 1 letter.",
         required=False,
         widget=forms.PasswordInput())
     password_again = forms.CharField(

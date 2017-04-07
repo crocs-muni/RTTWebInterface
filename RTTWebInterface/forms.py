@@ -17,6 +17,7 @@ class PasswordChangeForm(forms.Form):
         widget=forms.PasswordInput(attrs={'autofocus': '1'}))
     new_pwd = forms.CharField(
         label="New password",
+        help_text="At least 9 characters with at least 1 letter.",
         widget=forms.PasswordInput())
     new_pwd_again = forms.CharField(
         label="New password again",

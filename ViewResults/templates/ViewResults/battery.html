@@ -2,88 +2,89 @@
 
 
 {% block content %}
-<a href="{% url 'ViewResults:experiment' batt.experiment_id %}"><- Back to experiment {{ batt.experiment_id }}</a>
-<hr/>
-<h2>{% block title %}Battery detail{% endblock %}</h2>
+    <a href="{% url 'ViewResults:experiment' batt.experiment_id %}"><- Back to experiment {{ batt.experiment_id }}</a>
+    <hr/>
+    <h2>{% block title %}Battery detail{% endblock %}</h2>
 
-<table class="table">
-    <tr>
-        <th>ID</th>
-        <td>{{ batt.id }}</td>
-    </tr>
-    <tr>
-        <th>Name</th>
-        <td>{{ batt.name }}</td>
-    </tr>
-    <tr>
-        <th>Number of passed tests</th>
-        <td>{{ batt.passed_tests }}</td>
-    </tr>
-    <tr>
-        <th>Total number of tests</th>
-        <td>{{ batt.total_tests }}</td>
-    </tr>
-    <tr>
-        <th>Confidence level (alpha)</th>
-        <td>{{ batt.alpha }}</td>
-    </tr>
-    <tr>
-        <th>Name of the experiment</th>
-        <td>{{ experiment_name }}</td>
-    </tr>
-</table>
-
-<h2>Runtime warnings</h2>
-{% if battery_warning_list %}
-    <table class="table">
-        {% for w in battery_warning_list %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ w.message }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>No warnings.</p>
-{% endif %}
-
-<h2>Runtime errors</h2>
-{% if battery_error_list %}
-    <table class="table">
-        {% for e in battery_error_list %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ e.message }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>No errors.</p>
-{% endif %}
-
-<h2>Tests included in battery</h2>
     <table class="table">
         <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Result</th>
-            <th>Test variants</th>
-            <th></th>
+            <th>ID</th>
+            <td>{{ batt.id }}</td>
         </tr>
-
-        {% for t in test_list %}
-            <tr>
-                <td>{{ t.test_index }}</td>
-                <td>{{ t.name }}</td>
-                <td>{{ t.result }}</td>
-                <td>{{ t.variant_count }}</td>
-                <td><a href="{% url 'ViewResults:test' t.id %}">Detail</a></td>
-            </tr>
-        {% endfor %}
-
+        <tr>
+            <th>Name</th>
+            <td>{{ batt.name }}</td>
+        </tr>
+        <tr>
+            <th>Number of passed tests</th>
+            <td>{{ batt.passed_tests }}</td>
+        </tr>
+        <tr>
+            <th>Total number of tests</th>
+            <td>{{ batt.total_tests }}</td>
+        </tr>
+        <tr>
+            <th>Confidence level (alpha)</th>
+            <td>{{ batt.alpha }}</td>
+        </tr>
+        <tr>
+            <th>Name of the experiment</th>
+            <td>{{ experiment_name }}</td>
+        </tr>
     </table>
-{% if test_list %}
-{% else %}
-    <p>No tests were executed</p>
-{% endif %}
+
+    <h2>Tests included in battery</h2>
+    {% if test_list %}
+        <table class="table">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Result</th>
+                <th>Test variants</th>
+                <th></th>
+            </tr>
+
+            {% for t in test_list %}
+                <tr>
+                    <td>{{ t.test_index }}</td>
+                    <td>{{ t.name }}</td>
+                    <td>{{ t.result }}</td>
+                    <td>{{ t.variant_count }}</td>
+                    <td><a href="{% url 'ViewResults:test' t.id %}">Detail</a></td>
+                </tr>
+            {% endfor %}
+
+        </table>
+    {% else %}
+        <p>No tests were executed</p>
+    {% endif %}
+
+    <h2>Runtime warnings</h2>
+    {% if battery_warning_list %}
+        <table class="table">
+            {% for w in battery_warning_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ w.message }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No warnings.</p>
+    {% endif %}
+
+    <h2>Runtime errors</h2>
+    {% if battery_error_list %}
+        <table class="table">
+            {% for e in battery_error_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ e.message }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No errors.</p>
+    {% endif %}
+
 {% endblock content %}
