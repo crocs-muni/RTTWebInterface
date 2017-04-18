@@ -22,12 +22,28 @@
         <td>{{ exp.author_email }}</td>
     </tr>
     <tr>
+        <th>Status</th>
+        <td>{{ exp.status }}</td>
+    </tr>
+    <tr>
         <th>Time of creation</th>
         <td>{{ exp.created|date:'H:i, j M, Y' }}</td>
     </tr>
     <tr>
-        <th>Status</th>
-        <td>{{ exp.status }}</td>
+        <th>Start of computation</th>
+        {% if exp.run_started %}
+            <td>{{ exp.run_started|date:'H:i, j M, Y' }}</td>
+        {% else %}
+            <td>Not started yet.</td>
+        {% endif %}
+    </tr>
+    <tr>
+        <th>End of computation</th>
+        {% if exp.run_finished %}
+            <td>{{ exp.run_finished|date:'H:i, j M, Y' }}</td>
+        {% else %}
+            <td>Not finished yet.</td>
+        {% endif %}
     </tr>
     <tr>
         <th>Configuration file</th>

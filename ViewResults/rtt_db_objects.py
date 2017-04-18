@@ -1,7 +1,7 @@
 
 class Experiment(object):
     table_name = "experiments"
-    expected_tuple_els = 8
+    expected_tuple_els = 10
 
     def __init__(self, tup):
         check_init_tuple(tup, Experiment.expected_tuple_els, self.__class__.__name__)
@@ -10,10 +10,12 @@ class Experiment(object):
         self.name = tup[1]
         self.author_email = tup[2]
         self.created = tup[3]
-        self.status = tup[4]
-        self.config_file = tup[5]
-        self.data_file = tup[6]
-        self.data_file_sha256 = tup[7]
+        self.run_started = tup[4]
+        self.run_finished = tup[5]
+        self.status = tup[6]
+        self.config_file = tup[7]
+        self.data_file = tup[8]
+        self.data_file_sha256 = tup[9]
 
     def __str__(self):
         return "{} - ID: {}, Name: {}".format(self.__class__.__name__, self.id, self.name)
@@ -549,7 +551,7 @@ class PValue(object):
 
 def check_init_tuple(tup, expected_tuple_els, obj_name):
     if len(tup) != expected_tuple_els:
-        raise ValueError("tuple for initializing {} must have {} but has {}"
+        raise ValueError("tuple for initializing {} must have {} fields but has {}"
                          .format(obj_name, expected_tuple_els, len(tup)))
 
 
