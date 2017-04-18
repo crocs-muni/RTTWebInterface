@@ -64,6 +64,8 @@ class RTTPaginator(object):
         # Correct value of page is ensured here
         self.page = max(min_total_page, self.page)
         self.page = min(max_total_page, self.page)
+        if self.page == 0:
+            self.page = 1
 
         min_near_page = max(min_total_page, self.page - self.near_pages)
         max_near_page = min(max_total_page, self.page + self.near_pages)
