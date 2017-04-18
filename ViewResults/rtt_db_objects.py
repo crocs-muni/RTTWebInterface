@@ -9,10 +9,10 @@ class Experiment(object):
         self.id = tup[0]
         self.name = tup[1]
         self.author_email = tup[2]
-        self.created = tup[3]
-        self.run_started = tup[4]
-        self.run_finished = tup[5]
-        self.status = tup[6]
+        self.status = tup[3]
+        self.created = tup[4]
+        self.run_started = tup[5]
+        self.run_finished = tup[6]
         self.config_file = tup[7]
         self.data_file = tup[8]
         self.data_file_sha256 = tup[9]
@@ -113,7 +113,7 @@ class Experiment(object):
 class Job(object):
     table_name = "jobs"
     foreign_id_column = "experiment_id"
-    expected_tuple_els = 4
+    expected_tuple_els = 6
     
     def __init__(self, tup):
         check_init_tuple(tup, Job.expected_tuple_els, self.__class__.__name__)
@@ -121,7 +121,9 @@ class Job(object):
         self.id = tup[0]
         self.battery = tup[1]
         self.status = tup[2]
-        self.experiment_id = tup[3]
+        self.run_started = tup[3]
+        self.run_finished = tup[4]
+        self.experiment_id = tup[5]
 
     def __str__(self):
         return "{} - ID: {}, Battery: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
