@@ -28,9 +28,7 @@ class Experiment(object):
 
     @staticmethod
     def get_all_count(conn) -> int:
-        with conn.cursor() as c:
-            c.execute("SELECT COUNT(1) FROM {}".format(Experiment.table_name))
-            return c.fetchone()[0]
+        return get_all_count(conn, Experiment.table_name)
 
     @staticmethod
     def get_by_id(conn, experiment_id) -> 'Experiment':
@@ -200,7 +198,7 @@ class BatteryError(object):
 
     def __str__(self):
         return "{} - ID: {}, Message: {}, Battery ID: {}".format(self.__class__.__name__, self.id,
-                                                                 self.mess, self.battery_id)
+                                                                 self.message, self.battery_id)
 
     @staticmethod
     def get_all(conn) -> ['BatteryError']:
@@ -230,7 +228,7 @@ class BatteryWarning(object):
 
     def __str__(self):
         return "{} - ID: {}, Message: {}, Battery ID: {}".format(self.__class__.__name__, self.id,
-                                                                 self.mess, self.battery_id)
+                                                                 self.message, self.battery_id)
 
     @staticmethod
     def get_all(conn) -> ['BatteryWarning']:
@@ -308,6 +306,11 @@ class Variant(object):
         return get_db_objects_by_foreign_id(conn, Variant, Variant.table_name,
                                             test_id, Variant.foreign_id_column)
 
+    @staticmethod
+    def get_by_test_id_count(conn, test_id) -> int:
+        return get_foreign_id_count(conn, Variant.table_name, test_id,
+                                    Variant.foreign_id_column)
+
 
 class VariantError(object):
     table_name = "variant_errors"
@@ -338,6 +341,11 @@ class VariantError(object):
     def get_by_variant_id(conn, variant_id) -> ['VariantError']:
         return get_db_objects_by_foreign_id(conn, VariantError, VariantError.table_name,
                                             variant_id, VariantError.foreign_id_column)
+
+    @staticmethod
+    def get_by_variant_id_count(conn, variant_id) -> int:
+        return get_foreign_id_count(conn, VariantError.table_name, variant_id,
+                                    VariantError.foreign_id_column)
 
 
 class VariantWarning(object):
@@ -370,6 +378,11 @@ class VariantWarning(object):
         return get_db_objects_by_foreign_id(conn, VariantWarning, VariantWarning.table_name,
                                             variant_id, VariantWarning.foreign_id_column)
 
+    @staticmethod
+    def get_by_variant_id_count(conn, variant_id) -> int:
+        return get_foreign_id_count(conn, VariantWarning.table_name, variant_id,
+                                    VariantWarning.foreign_id_column)
+
 
 class VariantStdErr(object):
     table_name = "variant_stderr"
@@ -400,6 +413,11 @@ class VariantStdErr(object):
     def get_by_variant_id(conn, variant_id) -> ['VariantStdErr']:
         return get_db_objects_by_foreign_id(conn, VariantStdErr, VariantStdErr.table_name,
                                             variant_id, VariantStdErr.foreign_id_column)
+
+    @staticmethod
+    def get_by_variant_id_count(conn, variant_id) -> int:
+        return get_foreign_id_count(conn, VariantStdErr.table_name, variant_id,
+                                    VariantStdErr.foreign_id_column)
 
 
 class UserSetting(object):
@@ -464,6 +482,11 @@ class Subtest(object):
         return get_db_objects_by_foreign_id(conn, Subtest, Subtest.table_name,
                                             variant_id, Subtest.foreign_id_column)
 
+    @staticmethod
+    def get_by_variant_id_count(conn, variant_id) -> int:
+        return get_foreign_id_count(conn, Subtest.table_name, variant_id,
+                                    Subtest.foreign_id_column)
+
 
 class Statistic(object):
     table_name = "statistics"
@@ -496,6 +519,11 @@ class Statistic(object):
     def get_by_subtest_id(conn, subtest_id) -> ['Statistic']:
         return get_db_objects_by_foreign_id(conn, Statistic, Statistic.table_name,
                                             subtest_id, Statistic.foreign_id_column)
+
+    @staticmethod
+    def get_by_subtest_id_count(conn, subtest_id) -> int:
+        return get_foreign_id_count(conn, Statistic.table_name, subtest_id,
+                                    Statistic.foreign_id_column)
 
 
 class TestParameter(object):
@@ -560,6 +588,17 @@ class PValue(object):
         return get_db_objects_by_foreign_id(conn, PValue, PValue.table_name,
                                             subtest_id, PValue.foreign_id_column)
 
+    @staticmethod
+    def get_by_subtest_id_count(conn, subtest_id) -> int:
+        return get_foreign_id_count(conn, PValue.table_name,
+                                    subtest_id, PValue.foreign_id_column)
+
+
+'''
+Helper utility methods here.
+Only supposed to be used by the defined models not outside!!!
+'''
+
 
 def check_init_tuple(tup, expected_tuple_els, obj_name):
     if len(tup) != expected_tuple_els:
@@ -596,3 +635,17 @@ def get_db_objects_by_foreign_id(conn, db_obj, table_name, foreign_id, foreign_i
     with conn.cursor() as c:
         c.execute("SELECT * FROM {} WHERE {}=%s".format(table_name, foreign_id_column), [foreign_id])
         return map_db_rows_to_objects(c.fetchall(), db_obj)
+
+
+def get_all_count(conn, table_name) -> int:
+    with conn.cursor() as c:
+        c.execute("SELECT COUNT(1) FROM {}".format(table_name))
+        return c.fetchone()[0]
+
+
+def get_foreign_id_count(conn, table_name, foreign_id, foreign_id_column) -> int:
+    with conn.cursor() as c:
+        c.execute("SELECT COUNT(1) FROM {} WHERE {}=%s"
+                  .format(table_name, foreign_id_column),
+                  (foreign_id, ))
+        return c.fetchone()[0]

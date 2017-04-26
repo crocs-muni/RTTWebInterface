@@ -3,7 +3,7 @@ from math import ceil
 
 class RTTPaginator(object):
     default_page = 1
-    default_item_count = 10
+    default_item_count = 50
     near_pages = 2
     min_item_count = 1
     # Unsigned big int (2^64)

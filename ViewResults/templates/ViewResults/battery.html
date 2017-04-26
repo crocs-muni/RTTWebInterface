@@ -2,9 +2,20 @@
 
 
 {% block content %}
-    <a href="{% url 'ViewResults:experiment' batt.experiment_id %}"><- Back to experiment {{ batt.experiment_id }}</a>
-    <hr/>
-    <h2>{% block title %}Battery detail{% endblock %}</h2>
+
+
+    <h2 style="text-align: left; display: inline">
+        {% block title %}Battery detail{% endblock %}
+    </h2>
+    <span style="float:right">
+        <a href="{% url 'ViewResults:experiment' batt.experiment_id %}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Experiment {{ batt.experiment_id }}
+        </a>
+
+    </span>
+
+    <br/><br/>
 
     <table class="table">
         <tr>
@@ -45,12 +56,16 @@
             </tr>
 
             {% for t in test_list %}
-                <tr>
+                {% if t.result == "passed" %}
+                <tr class="success">
+                {% else %}
+                <tr class="danger">
+                {% endif %}
                     <td>{{ t.test_index }}</td>
                     <td>{{ t.name }}</td>
                     <td>{{ t.result }}</td>
                     <td>{{ t.variant_count }}</td>
-                    <td><a href="{% url 'ViewResults:test' t.id %}">Detail</a></td>
+                    <td><a href="{% url 'ViewResults:test' t.id %}" class="btn btn-primary btn-sm">Detail</a></td>
                 </tr>
             {% endfor %}
 
@@ -59,8 +74,8 @@
         <p>No tests were executed</p>
     {% endif %}
 
-    <h2>Runtime warnings</h2>
     {% if battery_warning_list %}
+        <h2>Runtime warnings</h2>
         <table class="table">
             {% for w in battery_warning_list %}
                 <tr>
@@ -69,12 +84,10 @@
                 </tr>
             {% endfor %}
         </table>
-    {% else %}
-        <p>No warnings.</p>
     {% endif %}
 
-    <h2>Runtime errors</h2>
     {% if battery_error_list %}
+        <h2>Runtime errors</h2>
         <table class="table">
             {% for e in battery_error_list %}
                 <tr>
@@ -83,8 +96,6 @@
                 </tr>
             {% endfor %}
         </table>
-    {% else %}
-        <p>No errors.</p>
     {% endif %}
 
 {% endblock content %}

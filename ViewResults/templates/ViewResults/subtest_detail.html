@@ -1,6 +1,7 @@
 
-<h2>Subtest parameters</h2>
+
 {% if test_parameter_list %}
+    <h2>Test parameters</h2>
     <table class="table">
         {% for t in test_parameter_list %}
             <tr>
@@ -9,12 +10,10 @@
             </tr>
         {% endfor %}
     </table>
-{% else %}
-    <p>No subtest parameters.</p>
 {% endif %}
 
-<h2>Subtest statistics</h2>
 {% if statistic_list %}
+    <h2>Statistics</h2>
     <table class="table">
         <tr>
             <th>Name</th>
@@ -29,20 +28,29 @@
             </tr>
         {% endfor %}
     </table>
-{% else %}
-    <p>No subtest statistics.</p>
 {% endif %}
 
-<h2>P-Values</h2>
 {% if p_value_list %}
-    <table class="table">
-        {% for p in p_value_list %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ p.value }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>No p-values.</p>
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="btn-block" data-toggle="collapse" href="#collapse1">
+                        <i class="glyphicon glyphicon-menu-down"></i>
+                        P-Values (click to expand)
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+                <table class="table">
+                    {% for p in p_value_list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ p.value }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
 {% endif %}

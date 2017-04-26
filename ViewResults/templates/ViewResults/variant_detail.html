@@ -1,11 +1,10 @@
 
-<h2>Subtests</h2>
+
 {% if subtest_list %}
     {% if subtest_list|length == 1 %}
-        <hr/>
         {% include 'ViewResults/subtest_detail.html' %}
-        <hr/>
     {% else %}
+        <h2>Subtests</h2>
         <table class="table">
             <tr>
                 <th>#</th>
@@ -18,7 +17,7 @@
                     <td>{{ s.subtest_index }}</td>
                     <td>{{ s.stat_count }}</td>
                     <td>{{ s.p_val_count }}</td>
-                    <td><a href="{% url 'ViewResults:subtest' s.id %}">Detail</a></td>
+                    <td><a href="{% url 'ViewResults:subtest' s.id %}" class="btn btn-primary btn-sm">Detail</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -27,8 +26,8 @@
     <p>No subtests.</p>
 {% endif %}
 
-<h2>Warning messages</h2>
 {% if variant_warning_list %}
+    <h2>Warning messages</h2>
     <table class="table">
         {% for w in variant_warning_list %}
             <tr>
@@ -37,12 +36,10 @@
             </tr>
         {% endfor %}
     </table>
-{% else %}
-    <p>No warnings.</p>
 {% endif %}
 
-<h2>Error messages</h2>
 {% if variant_error_list %}
+    <h2>Error messages</h2>
     <table class="table">
         {% for e in variant_error_list %}
             <tr>
@@ -51,12 +48,10 @@
             </tr>
         {% endfor %}
     </table>
-{% else %}
-    <p>No errors.</p>
 {% endif %}
 
-<h2>Standard error output</h2>
 {% if variant_stderr_list %}
+    <h2>Standard error output</h2>
     <table class="table">
         {% for s in variant_stderr_list %}
             <tr>
@@ -65,6 +60,4 @@
             </tr>
         {% endfor %}
     </table>
-{% else %}
-    <p>No standard error output.</p>
 {% endif %}

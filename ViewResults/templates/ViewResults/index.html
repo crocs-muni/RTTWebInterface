@@ -68,7 +68,6 @@
                 </tr>
             </thead>
 
-
             <tbody>
                 {% for e in paginator.object_list %}
                     {% if e.status == 'pending' %}
@@ -83,7 +82,7 @@
                         <td>{{ e.created|date:'H:i, j M, Y' }}</td>
                         <td>{{ e.status }}</td>
                         <td>
-                            <a href="{% url 'ViewResults:experiment' e.id %}">Detail</a>
+                            <a href="{% url 'ViewResults:experiment' e.id %}" class="btn btn-primary btn-sm">Detail</a>
                         </td>
                     </tr>
                 {% endfor %}

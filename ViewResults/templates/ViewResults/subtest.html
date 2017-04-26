@@ -1,23 +1,31 @@
 {% extends 'base_layout.html' %}
 
 {% block content %}
-<a href="{% url 'ViewResults:variant' sub.variant_id %}"><- Back to variant {{ sub.variant_id }}</a>
+    <h2 style="text-align: left; display: inline">
+        {% block title %}Subtest detail{% endblock %}
+    </h2>
+    <span style="float: right">
+        <a href="{% url 'ViewResults:variant' sub.variant_id %}" class="btn btn-default">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Variant {{ sub.variant_id }}
+        </a>
+    </span>
+    <br/><br/>
 
-<h2>{% block title %}Subtest detail{% endblock %}</h2>
-<table class="table">
-    <tr>
-        <th>ID</th>
-        <td>{{ sub.id }}</td>
-    </tr>
-    <tr>
-        <th>Subtest index</th>
-        <td>{{ sub.subtest_index }}</td>
-    </tr>
-    <tr>
-        <th>Test name</th>
-        <td>{{ test_name }}</td>
-    </tr>
-</table>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <td>{{ sub.id }}</td>
+        </tr>
+        <tr>
+            <th>Subtest index</th>
+            <td>{{ sub.subtest_index }}</td>
+        </tr>
+        <tr>
+            <th>Test name</th>
+            <td>{{ test_name }}</td>
+        </tr>
+    </table>
 
-{% include 'ViewResults/subtest_detail.html' %}
+    {% include 'ViewResults/subtest_detail.html' %}
 {% endblock %}

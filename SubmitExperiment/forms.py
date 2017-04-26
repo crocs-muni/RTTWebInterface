@@ -40,7 +40,7 @@ class ExperimentForm(forms.Form):
         label='NIST Statistical Testing Suite',
         required=False)
     batt_die = forms.BooleanField(
-        label='DIEHARDER',
+        label='Dieharder',
         required=False)
     batt_tu_sc = forms.BooleanField(
         label='TestU01 Small Crush',

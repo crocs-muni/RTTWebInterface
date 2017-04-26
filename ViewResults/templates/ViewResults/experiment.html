@@ -1,93 +1,98 @@
 {% extends 'base_layout.html' %}
 
 
-{% block title %}{{ exp.name }} expreriment{% endblock %}
+{% block title %}{{ exp.name }} experiment{% endblock %}
 
 {% block content %}
-<a href="{% url 'ViewResults:index' %}"><- Back to experiments</a>
-<hr/>
-<h2>Detail of experiment</h2>
 
-<table class="table">
-    <tr>
-        <th>ID</th>
-        <td>{{ exp.id }}</td>
-    </tr>
-    <tr>
-        <th>Name</th>
-        <td>{{ exp.name }}</td>
-    </tr>
-    <tr>
-        <th>Author e-mail</th>
-        <td>{{ exp.author_email }}</td>
-    </tr>
-    <tr>
-        <th>Status</th>
-        <td>{{ exp.status }}</td>
-    </tr>
-    <tr>
-        <th>Time of creation</th>
-        <td>{{ exp.created|date:'H:i, j M, Y' }}</td>
-    </tr>
-    <tr>
-        <th>Start of computation</th>
-        {% if exp.run_started %}
-            <td>{{ exp.run_started|date:'H:i, j M, Y' }}</td>
-        {% else %}
-            <td>Not started yet.</td>
-        {% endif %}
-    </tr>
-    <tr>
-        <th>End of computation</th>
-        {% if exp.run_finished %}
-            <td>{{ exp.run_finished|date:'H:i, j M, Y' }}</td>
-        {% else %}
-            <td>Not finished yet.</td>
-        {% endif %}
-    </tr>
-    <tr>
-        <th>Configuration file</th>
-        <td>{{ exp.config_file }}</td>
-    </tr>
-    <tr>
-        <th>Data file</th>
-        <td>{{ exp.data_file }}</td>
-    </tr>
-    <tr>
-        <th>Hash of data (SHA-256)</th>
-        <td>{{ exp.data_file_sha256 }}</td>
-    </tr>
-</table>
+    <h2 style="text-align: left; display: inline">
+        Detail of experiment
+    </h2>
+    <span style="float: right">
+        <a href="{% url 'ViewResults:index' %}" class="btn btn-default">View experiments</a>
+    </span>
+    <br/><br/>
 
-<h2>Analysis done on data by statistical batteries</h2>
-
-{% if battery_list %}
     <table class="table">
-    <tr>
-        <th>Name</th>
-        <th>Passed tests</th>
-        <th>Total tests</th>
-        <th></th>
-    </tr>
-
-    {% for b in battery_list %}
-        {% if b.get_prob_of_random <= 0.001 %}
-        <tr class="danger">
-        {% elif b.get_prob_of_random <= 0.01 %}
-        <tr class="warning">
-        {% else %}
-        <tr class="success">
-        {% endif %}
-            <td>{{ b.name }}</td>
-            <td>{{ b.passed_tests }}</td>
-            <td>{{ b.total_tests }}</td>
-            <td><a href="{% url 'ViewResults:battery' b.id %}">Detail</a></td>
+        <tr>
+            <th>ID</th>
+            <td>{{ exp.id }}</td>
         </tr>
-    {% endfor %}
-
+        <tr>
+            <th>Name</th>
+            <td>{{ exp.name }}</td>
+        </tr>
+        <tr>
+            <th>Author e-mail</th>
+            <td>{{ exp.author_email }}</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>{{ exp.status }}</td>
+        </tr>
+        <tr>
+            <th>Time of creation</th>
+            <td>{{ exp.created|date:'H:i, j M, Y' }}</td>
+        </tr>
+        <tr>
+            <th>Start of computation</th>
+            {% if exp.run_started %}
+                <td>{{ exp.run_started|date:'H:i, j M, Y' }}</td>
+            {% else %}
+                <td>Not started yet.</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <th>End of computation</th>
+            {% if exp.run_finished %}
+                <td>{{ exp.run_finished|date:'H:i, j M, Y' }}</td>
+            {% else %}
+                <td>Not finished yet.</td>
+            {% endif %}
+        </tr>
+        <tr>
+            <th>Configuration file</th>
+            <td>{{ exp.config_file }}</td>
+        </tr>
+        <tr>
+            <th>Data file</th>
+            <td>{{ exp.data_file }}</td>
+        </tr>
+        <tr>
+            <th>Hash of data (SHA-256)</th>
+            <td>{{ exp.data_file_sha256 }}</td>
+        </tr>
     </table>
-{% else %}
-    <p>No batteries were yet finished.</p>
-{% endif %}
+
+    <h2>Analysis done on data by statistical batteries</h2>
+
+    {% if battery_list %}
+        <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Passed tests</th>
+            <th>Total tests</th>
+            <th></th>
+        </tr>
+
+        {% for b in battery_list %}
+            {% if b.get_prob_of_random <= 0.001 %}
+            <tr class="danger">
+            {% elif b.get_prob_of_random <= 0.01 %}
+            <tr class="warning">
+            {% else %}
+            <tr class="success">
+            {% endif %}
+                <td>{{ b.name }}</td>
+                <td>{{ b.passed_tests }}</td>
+                <td>{{ b.total_tests }}</td>
+                <td><a href="{% url 'ViewResults:battery' b.id %}" class="btn btn-primary btn-sm">Detail</a></td>
+            </tr>
+        {% endfor %}
+
+        </table>
+    {% else %}
+        <p>No batteries were yet finished.</p>
+    {% endif %}
 
 {% endblock %}
