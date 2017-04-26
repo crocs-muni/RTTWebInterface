@@ -1,3 +1,5 @@
+from scipy.stats import binom
+
 
 class Experiment(object):
     table_name = "experiments"
@@ -164,6 +166,11 @@ class Battery(object):
 
     def total_passed_diff(self):
         return self.total_tests - self.passed_tests
+
+    def get_prob_of_random(self):
+        # We calculate with alpha=0.01
+        # Therefore probability of test passing is 0.99
+        return binom.pmf(self.passed_tests, self.total_tests, 1 - 0.01)
 
     @staticmethod
     def get_all(conn) -> ['Battery']:
