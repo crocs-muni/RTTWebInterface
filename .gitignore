@@ -2,7 +2,7 @@
 .idea/
 credentials/
 media/
-submit_binary/
+submit_experiment_script/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

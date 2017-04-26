@@ -3,15 +3,70 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <p>
-        {% if user.is_authenticated %}
-            <p>You are logged in {{ user.username }}.</p>
-            <p>Your email is {{ user.email }}</p>
-            <p>Your first name is {{ user.first_name }}</p>
-            <p>Your last name is {{ user.last_name }}</p>
-        {% endif %}
-        <i>Here is info about our AWESOME tool for detecting biases in supposedly random data.</i>
-    </p>
+   <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="jumbotron">
+				<h2>
+					Randomness Testing Toolkit
+				</h2>
+				<p>
+                    This service allows users to easily and quickly test randomness of their binary data. The data are analysed with following statistical software.
+                </p>
+                <ul>
+                <li>
+                    <a href="http://csrc.nist.gov/groups/ST/toolkit/rng/documentation_software.html">NIST Statistical Test Suite</a>
+                </li>
+                <li>
+                    <a href="http://www.phy.duke.edu/~rgb/General/dieharder.php">Dieharder</a>
+                </li>
+                <li>
+                    <a href="http://simul.iro.umontreal.ca/testu01/tu01.html">TestU01</a>
+                </li>
+                </ul>
+                <p>
+                    RTT was developed at Centre for Research on Cryptography and Security, Faculty of Informatics, Masaryk University.
+                </p>
+				<p>
+					<a class="btn btn-primary btn-large" href="https://github.com/crocs-muni/randomness-testing-toolkit">Project GitHub</a>
+                    <a class="btn btn-default btn-large" href="https://crocs.fi.muni.cz">CRoCS</a>
+                    <a class="btn btn-default btn-large" href="https://fi.muni.cz">FI MUNI</a>
+				</p>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+                    <h2>
+                        Test your data
+                    </h2>
+                    <p>
+                        You can use our tool and servers to analyse your data. You don't have to install anything, you only need to provide data for analysis.
+                        The service is available only for authorized users, please write us to lubomir.obratil@gmail.com and we will create an account for you.
+                    </p>
+                    <p>
+                        <strong>
+                            We do not store analysed data.
+                        </strong>
+                    </p>
+                    <p>
+                        <a class="btn btn-primary btn-large" href="{% url 'SubmitExperiment:index' %}">Create experiment</a>
+                    </p>
+				</div>
+				<div class="col-md-6">
+                    <h2>
+                        Inspect results
+                    </h2>
+                    <p>
+                        After the analysis, you can inspect the results and their interpretation on this page.
+                    </p>
+                    <br/>
+                    <p>
+                        <a class="btn btn-primary btn-large" href="{% url 'ViewResults:index' %}">View results</a>
+                    </p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}
 
 

@@ -7,7 +7,6 @@ from .forms import ExperimentForm
 from .models import PredefinedConfiguration
 from .models import AccessCode
 
-from types import SimpleNamespace
 import subprocess
 import shlex
 import os
@@ -72,7 +71,9 @@ def submit_experiment(form, email, in_file_path, cfg_file_path):
     args_str += ' --name \'{}\' --cfg \'{}\' --file \'{}\' ' \
         .format(form.cleaned_data['exp_name'], cfg_file_path, in_file_path)
 
-    with open(os.devnull, 'w') as f_null:
+    log_file = os.path.splitext(settings.SUBMIT_EXP_BINARY)[0]
+    log_file += ".log"
+    with open(log_file, 'a') as f_null:
         subprocess.call(shlex.split(args_str),
                         stdout=f_null, stderr=subprocess.STDOUT)
 

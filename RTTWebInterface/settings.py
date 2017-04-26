@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # Path to binary for submitting experiments to rtt server infrastructure
-SUBMIT_EXP_BINARY = os.path.join(BASE_DIR, 'SubmitExperiment/submit_binary/submit_experiment')
+SUBMIT_EXP_BINARY = os.path.join(BASE_DIR, 'submit_experiment_script/submit_experiment')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 with open(os.path.join(BASE_DIR, "credentials/secret_key")) as f:
@@ -82,42 +82,48 @@ WSGI_APPLICATION = 'RTTWebInterface.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-default_db_cred_file = os.path.join(BASE_DIR, "credentials/default_db_credentials.ini")
-default_db_cred = configparser.ConfigParser()
-default_db_cred.read(default_db_cred_file)
-if len(default_db_cred.sections()) == 0:
-    raise FileNotFoundError("can't read credentials: {}".format(default_db_cred_file))
+default_db_config_file = os.path.join(BASE_DIR, "credentials/default_db_config.ini")
+default_db_config = configparser.ConfigParser()
+default_db_config.read(default_db_config_file)
+if len(default_db_config.sections()) == 0:
+    raise FileNotFoundError("can't read db config: {}".format(default_db_config_file))
 
-rtt_db_cred_file = os.path.join(BASE_DIR, "credentials/rtt_db_credentials.ini")
+rtt_db_config_file = os.path.join(BASE_DIR, "submit_experiment_script/frontend.ini")
+rtt_db_config = configparser.ConfigParser()
+rtt_db_config.read(rtt_db_config_file)
+if len(rtt_db_config.sections()) == 0:
+    raise FileNotFoundError("can't read db config: {}".format(rtt_db_config_file))
+
+rtt_db_cred_file = rtt_db_config.get('MySQL-Database', 'credentials-file')
 rtt_db_cred = configparser.ConfigParser()
 rtt_db_cred.read(rtt_db_cred_file)
 if len(rtt_db_cred.sections()) == 0:
-    raise FileNotFoundError("can't read credentials: {}".format(rtt_db_cred_file))
+    raise FileNotFoundError("can't read db credentials: {}".format(rtt_db_cred_file))
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': default_db_cred.get('Credentials', 'Name'),
-        'USER': default_db_cred.get('Credentials', 'Username'),
-        'PASSWORD': default_db_cred.get('Credentials', 'Password'),
-        'HOST': default_db_cred.get('Credentials', 'Host'),
-        'PORT': default_db_cred.get('Credentials', 'Port'),
+        'NAME': default_db_config.get('MySQL-Database', 'Name'),
+        'USER': default_db_config.get('MySQL-Database', 'Username'),
+        'PASSWORD': default_db_config.get('MySQL-Database', 'Password'),
+        'HOST': default_db_config.get('MySQL-Database', 'Address'),
+        'PORT': default_db_config.get('MySQL-Database', 'Port'),
     },
     'rtt-database': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': rtt_db_cred.get('Credentials', 'Name'),
+        'NAME': rtt_db_config.get('MySQL-Database', 'Name'),
+        'HOST': rtt_db_config.get('MySQL-Database', 'Address'),
+        'PORT': rtt_db_config.get('MySQL-Database', 'Port'),
         'USER': rtt_db_cred.get('Credentials', 'Username'),
         'PASSWORD': rtt_db_cred.get('Credentials', 'Password'),
-        'HOST': rtt_db_cred.get('Credentials', 'Host'),
-        'PORT': rtt_db_cred.get('Credentials', 'Port'),
         'OPTIONS': {
             'autocommit': False,
         },
     }
 }
 
-del rtt_db_cred
-del default_db_cred
+del rtt_db_config
+del default_db_config
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators

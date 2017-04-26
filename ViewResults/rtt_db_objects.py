@@ -162,6 +162,9 @@ class Battery(object):
         return "{} - ID: {}, Name: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
                                                                  self.name, self.experiment_id)
 
+    def total_passed_diff(self):
+        return self.total_tests - self.passed_tests
+
     @staticmethod
     def get_all(conn) -> ['Battery']:
         return get_all_db_objects(conn, Battery, Battery.table_name)

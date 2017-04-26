@@ -12,7 +12,8 @@ class ExperimentForm(forms.Form):
         label='E-Mail',
         required=False)
     in_file = forms.FileField(
-        label='Input file for batteries')
+        label='Binary data that will be analysed',
+        help_text="The data is deleted after the analysis.")
 
     # Configuration fields
     default_cfg = forms.BooleanField(

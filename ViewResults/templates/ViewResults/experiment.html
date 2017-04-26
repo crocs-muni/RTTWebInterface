@@ -71,7 +71,13 @@
     </tr>
 
     {% for b in battery_list %}
+        {% if b.total_passed_diff == 0 %}
         <tr>
+        {% elif b.total_passed_diff == 1 %}
+        <tr class="warning">
+        {% else %}
+        <tr class="danger">
+        {% endif %}
             <td>{{ b.name }}</td>
             <td>{{ b.passed_tests }}</td>
             <td>{{ b.total_tests }}</td>
