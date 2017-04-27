@@ -21,7 +21,11 @@
             <th>Result</th>
         </tr>
         {% for s in statistic_list %}
-            <tr>
+            {% if s.result == "passed" %}
+            <tr class="success">
+            {% else %}
+            <tr class="danger">
+            {% endif %}
                 <td>{{ s.name }}</td>
                 <td>{{ s.value }}</td>
                 <td>{{ s.result }}</td>

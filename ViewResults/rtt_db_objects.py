@@ -294,6 +294,24 @@ class Variant(object):
                                                             self.variant_index, self.test_id)
 
     @staticmethod
+    def get_result(conn, variant_id) -> str:
+        with conn.cursor() as c:
+            c.execute(
+                "SELECT COUNT(1) "
+                "FROM {0} "
+                "JOIN {1} "
+                "ON {0}.{2}={1}.id "
+                "WHERE {0}.result='failed' "
+                "AND {1}.{3}=%s"
+                .format(Statistic.table_name, Subtest.table_name,
+                        Statistic.foreign_id_column, Subtest.foreign_id_column)
+                , (variant_id, ))
+            if c.fetchone()[0] == 0:
+                return "passed"
+
+            return "failed"
+
+    @staticmethod
     def get_all(conn) -> ['Variant']:
         return get_all_db_objects(conn, Variant, Variant.table_name)
 

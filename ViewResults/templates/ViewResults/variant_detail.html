@@ -8,16 +8,33 @@
         <table class="table">
             <tr>
                 <th>#</th>
-                <th>Statistics</th>
                 <th>P-Values</th>
+                <th>List of statistics</th>
                 <th></th>
             </tr>
             {% for s in subtest_list %}
                 <tr>
                     <td>{{ s.subtest_index }}</td>
-                    <td>{{ s.stat_count }}</td>
                     <td>{{ s.p_val_count }}</td>
-                    <td><a href="{% url 'ViewResults:subtest' s.id %}" class="btn btn-primary btn-sm">Detail</a></td>
+                    <td>
+                        {% if s.statistic_list %}
+                            <table class="table">
+                                {% for stat in s.statistic_list %}
+                                    {% if stat.result == "passed" %}
+                                    <tr class="success">
+                                    {% else %}
+                                    <tr class="danger">
+                                    {% endif %}
+                                        <td>{{ stat.name }}</td>
+                                        <td>{{ stat.value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        {% else %}
+                            No statistics
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'ViewResults:subtest' s.id %}" class="btn btn-primary">Detail</a></td>
                 </tr>
             {% endfor %}
         </table>

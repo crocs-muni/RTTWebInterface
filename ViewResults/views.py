@@ -117,14 +117,16 @@ def test(request, test_id):
         else:
             for s in subtest_list:
                 s.p_val_count = PValue.get_by_subtest_id_count(c, s.id)
-                s.stat_count = Statistic.get_by_subtest_id_count(c, s.id)
+                s.statistic_list = Statistic.get_by_subtest_id(c, s.id)
 
     else:
         for v in variant_list:
+            v.result = Variant.get_result(c, v.id)
+            v.subtest_list = Subtest.get_by_variant_id(c, v.id)
+            for s in v.subtest_list:
+                s.statistic_list = Statistic.get_by_subtest_id(c, s.id)
+
             v.subtest_count = Subtest.get_by_variant_id_count(c, v.id)
-            v.warning_count = VariantWarning.get_by_variant_id_count(c, v.id)
-            v.error_count = VariantError.get_by_variant_id_count(c, v.id)
-            v.stderr_count = VariantStdErr.get_by_variant_id_count(c, v.id)
 
     return render(request, 'ViewResults/test.html', ctx)
 
@@ -155,7 +157,7 @@ def variant(request, variant_id):
     else:
         for s in subtest_list:
             s.p_val_count = PValue.get_by_subtest_id_count(c, s.id)
-            s.stat_count = Statistic.get_by_subtest_id_count(c, s.id)
+            s.statistic_list = Statistic.get_by_subtest_id(c, s.id)
 
     return render(request, 'ViewResults/variant.html', ctx)
 
