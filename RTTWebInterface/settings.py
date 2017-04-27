@@ -122,6 +122,7 @@ DATABASES = {
     }
 }
 
+del rtt_db_cred
 del rtt_db_config
 del default_db_config
 
