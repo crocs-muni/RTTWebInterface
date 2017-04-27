@@ -76,7 +76,9 @@
         </tr>
 
         {% for b in battery_list %}
-            {% if b.get_prob_of_random <= 0.001 %}
+            {% if b.total_tests == 0 %}
+            <tr>
+            {% elif b.get_prob_of_random <= 0.001 %}
             <tr class="danger">
             {% elif b.get_prob_of_random <= 0.01 %}
             <tr class="warning">

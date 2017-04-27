@@ -60,9 +60,11 @@ def experiment(request, experiment_id):
     if not exp:
         raise Http404("No such experiment.")
 
+    battery_list = Battery.get_by_experiment_id(c, exp.id)
+    battery_list.sort(key=lambda x: x.name)
     ctx = {
         'exp': exp,
-        'battery_list': Battery.get_by_experiment_id(c, exp.id)
+        'battery_list': battery_list
     }
     return render(request, 'ViewResults/experiment.html', ctx)
 
