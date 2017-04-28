@@ -86,8 +86,13 @@
             <tr class="success">
             {% endif %}
                 <td>{{ b.name }}</td>
+                {% if b.passed_tests != b.total_tests %}
+                <td><strong>{{ b.passed_tests }}</strong></td>
+                <td><strong>{{ b.total_tests }}</strong></td>
+                {% else %}
                 <td>{{ b.passed_tests }}</td>
                 <td>{{ b.total_tests }}</td>
+                {% endif %}
                 <td><a href="{% url 'ViewResults:battery' b.id %}" class="btn btn-primary btn-sm">Detail</a></td>
             </tr>
         {% endfor %}
