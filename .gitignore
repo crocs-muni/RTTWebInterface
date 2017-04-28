@@ -1,8 +1,11 @@
+# Environment related files
+credentials/
+submit_experiment_script/
+media/
+RTTWebInterface/settings_production.py
+
 # Project files
 .idea/
-credentials/
-media/
-submit_experiment_script/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -173,3 +173,18 @@ STATICFILES_DIRS = [
 # For file uploads
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+"""
+Settings specific for production env (Debug=False, allowed_hosts, etc.)
+should be defined in file production_settings.py that is not in version
+control. Then the update of source code can be done easily, without
+the need of managing two versions of settings.py.
+
+Any specific local settings should be set/overridden in file
+settings_production.py, not in settings.py.
+File settings.py is versioned whereas settings_production.py is not.
+"""
+try:
+    from .settings_production import *
+except ImportError as e:
+    pass
