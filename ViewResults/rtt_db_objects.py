@@ -170,6 +170,19 @@ class Battery(object):
         # Therefore probability of test passing is 0.99
         return binom.pmf(self.passed_tests, self.total_tests, 1 - 0.01)
 
+    def get_assessment(self):
+        if self.total_tests == 0:
+            return ""
+
+        eps = 1e-8
+        p = self.get_prob_of_random()
+        if p < 0.001 - eps:
+            return "FAIL"
+        elif p < 0.01 - eps:
+            return "Suspect"
+        else:
+            return "OK"
+
     @staticmethod
     def get_all(conn) -> ['Battery']:
         return get_all_db_objects(conn, Battery, Battery.table_name)
