@@ -28,90 +28,117 @@
             </div>
         </div>
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-
-                    <ul class="nav nav-pills">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'index' %}">
+                        RTT
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="topNavbar">
+                    <ul class="nav navbar-nav">
                         <li>
-                            <a href="{% url 'index' %}" class="btn btn-default">
-                                Home
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="{% url 'ViewResults:index' %}" class="btn btn-default">
+                            <a href="{% url 'ViewResults:index' %}">
                                 View results
                             </a>
                         </li>
-
                         <li>
-                            <a href="{% url 'SubmitExperiment:index' %}" class="btn btn-default">
+                            <a href="{% url 'SubmitExperiment:index' %}">
                                 Create new experiment
                             </a>
                         </li>
-
                         {% if user.is_superuser %}
                             <li class="dropdown">
-                                <a href="#" data-toggle="dropdown" class="dropdown-toggle">Administration<strong class="caret"></strong></a>
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Administration
+                                    <span class="caret"></span>
+                                </a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="{% url 'Administration:list_users' %}">Users</a>
+                                        <a href="{% url 'Administration:list_users' %}">
+                                            Users
+                                        </a>
                                     </li>
                                     <li>
-                                        <a href="{% url 'Administration:add_user' %}">Create new user</a>
-                                    </li>
-                                    <li class="divider"></li>
-                                    <li>
-                                        <a href="{% url 'Administration:list_access_codes' %}">Access codes</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'Administration:add_access_code' %}">Create new access code</a>
+                                        <a href="{% url 'Administration:add_user' %}">
+                                            Create new user
+                                        </a>
                                     </li>
                                     <li class="divider"></li>
                                     <li>
-                                        <a href="{% url 'Administration:list_predefined_configurations' %}">Predefined configurations</a>
+                                        <a href="{% url 'Administration:list_access_codes' %}">
+                                            Access codes
+                                        </a>
                                     </li>
                                     <li>
-                                        <a href="{% url 'Administration:add_predefined_configuration' %}">Create new configuration</a>
+                                        <a href="{% url 'Administration:add_access_code' %}">
+                                            Create new access code
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="{% url 'Administration:list_predefined_configurations' %}">
+                                            Predefined configurations
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'Administration:add_predefined_configuration' %}">
+                                            Create new configuration
+                                        </a>
                                     </li>
                                 </ul>
-                        </li>
+                            </li>
                         {% endif %}
-
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
                         {% if user.is_authenticated %}
-                        <li class="dropdown pull-right">
-                            <a href="#" data-toggle="dropdown" class="dropdown-toggle">Welcome back, {{ user.username }}!<strong class="caret"></strong></a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="{% url 'edit_account' %}">Edit account</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'password_change' %}">Change password</a>
-                                </li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a href="{% url 'logout' %}">Logout</a>
-                                </li>
-                            </ul>
-                        </li>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    Hi, {{ user.username }}!
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{% url 'edit_account' %}">
+                                            Edit account
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'password_change' %}">
+                                            Change password
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="{% url 'logout' %}">
+                                    <span class="glyphicon glyphicon-log-out"></span>
+                                    Logout
+                                </a>
+                            </li>
                         {% else %}
-                        <li class="pull-right">
-                            <a href="{% url 'register' %}">
-                                Register
-                            </a>
-                        </li>
-                        <li class="pull-right">
-                            <a href="{% url 'login' %}" class="btn btn-primary">
-                                Login
-                            </a>
-                        </li>
+                            <li>
+                                <a href="{% url 'register' %}">
+                                    <span class="glyphicon glyphicon-user"></span>
+                                    Register
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'login' %}">
+                                    <span class="glyphicon glyphicon-log-in"></span>
+                                    Login
+                                </a>
+                            </li>
                         {% endif %}
                     </ul>
                 </div>
             </div>
-        </div>
-        <hr/>
+        </nav>
 
         <div class="container content">
             {% block content %}
