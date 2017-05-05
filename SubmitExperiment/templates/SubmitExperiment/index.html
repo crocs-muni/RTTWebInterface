@@ -7,7 +7,8 @@
     {% include 'messages.html' %}
 
     {% load bootstrap %}
-    <form method="post" enctype="multipart/form-data" action="{% url 'SubmitExperiment:index' %}">
+    <form name="submitExpForm" method="post" onsubmit="return validateForm()"
+          enctype="multipart/form-data" action="{% url 'SubmitExperiment:index' %}">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <ul>
@@ -35,6 +36,10 @@
 
         <fieldset>
             <legend>Battery application</legend>
+            <ul style="display: none" id="batt_error">
+                <li><p class="text-danger">No battery was set for execution.</p></li>
+            </ul>
+
             <div class="form-group">
                 <input type="checkbox" name="batt_all" id="batt_all" onclick="switchBatteries();">
                 <label for="batt_all">Switch all</label>
@@ -80,6 +85,23 @@
                 document.getElementById('{{ form.batt_tu_ab.id_for_label }}').checked ^= true;
                 document.getElementById('{{ form.batt_tu_bab.id_for_label }}').checked ^= true;
                 //document.getElementById('{{ form.batt_tu_bc.id_for_label }}').checked ^= true;
+        }
+
+        function validateForm() {
+            if (document.getElementById('{{ form.batt_sts.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_die.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_tu_sc.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_tu_c.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_tu_bc.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_tu_rab.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_tu_ab.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_tu_bab.id_for_label }}').checked == false) {
+
+                document.getElementById('batt_error').style.display = "";
+                return false;
+            } else {
+                return true;
+            }
         }
     </script>
 
