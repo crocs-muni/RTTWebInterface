@@ -1,5 +1,5 @@
 from scipy.stats import binom
-
+import math
 
 class Experiment(object):
     table_name = "experiments"
@@ -166,9 +166,19 @@ class Battery(object):
         return self.total_tests - self.passed_tests
 
     def get_prob_of_random(self):
-        # We calculate with alpha=0.01
-        # Therefore probability of test passing is 0.99
-        return binom.pmf(self.passed_tests, self.total_tests, 1 - 0.01)
+        # We calculate with alpha of battery
+        # Therefore probability of test passing is 1 - alpha
+        # This code will calculate sum of probabilities
+        # of success counts more distant from expected value
+        e = self.total_tests * (1 - self.alpha)
+        d = math.fabs(self.passed_tests - e)
+        rval = 0
+        bot = max(0, int(math.floor(e - d) + 1))
+        top = min(self.total_tests, int(math.ceil(e + d)))
+        for i in range(bot, top):
+            rval += binom.pmf(i, self.total_tests, 1 - self.alpha)
+
+        return 1 - rval
 
     def get_assessment(self):
         if self.total_tests == 0:
