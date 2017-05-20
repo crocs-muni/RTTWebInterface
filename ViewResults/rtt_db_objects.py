@@ -174,8 +174,9 @@ class Battery(object):
         d = math.fabs(self.passed_tests - e)
         rval = 0
         bot = max(0, int(math.floor(e - d) + 1))
-        top = min(self.total_tests, int(math.ceil(e + d)))
-        for i in range(bot, top):
+        top = min(self.total_tests, int(math.ceil(e + d) - 1))
+        # Top is +1 to be included in the range.
+        for i in range(bot, top + 1):
             rval += binom.pmf(i, self.total_tests, 1 - self.alpha)
 
         return 1 - rval
