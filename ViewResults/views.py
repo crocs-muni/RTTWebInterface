@@ -7,8 +7,16 @@ from .forms import FilterExperimentsForm
 from django.utils.dateparse import parse_datetime
 
 
+def get_auth_error(request):
+    if not request.user.is_authenticated:
+        return render(request, 'access_denied.html')
+
 # Create your views here.
 def index(request):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
     if request.method != 'POST':
         # Filling form object from url parameters
         args = {
@@ -55,6 +63,10 @@ def index(request):
 
 
 def experiment(request, experiment_id):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
     c = connections['rtt-database']
     exp = Experiment.get_by_id(c, experiment_id)
     if not exp:
@@ -70,6 +82,10 @@ def experiment(request, experiment_id):
 
 
 def battery(request, battery_id):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
     c = connections['rtt-database']
     batt = Battery.get_by_id(c, battery_id)
     if not batt:
@@ -90,6 +106,10 @@ def battery(request, battery_id):
 
 
 def test(request, test_id):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
     c = connections['rtt-database']
     tst = Test.get_by_id(c, test_id)
     if not tst:
@@ -134,6 +154,10 @@ def test(request, test_id):
 
 
 def variant(request, variant_id):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
     c = connections['rtt-database']
     var = Variant.get_by_id(c, variant_id)
     if not var:
@@ -165,6 +189,10 @@ def variant(request, variant_id):
 
 
 def subtest(request, subtest_id):
+    auth_error = get_auth_error(request)
+    if auth_error is not None:
+        return auth_error
+
     c = connections['rtt-database']
     sub = Subtest.get_by_id(c, subtest_id)
     if not sub:
