@@ -10,7 +10,7 @@ class RTTPaginator(object):
     max_item_count = 18446744073709551615
 
     def_item_counts = [
-        10, 50, 100, 500, 1000
+        10, 50, 100, 500, 1000, 5000
     ]
 
     def __init__(self, request, conn, rtt_obj_model,
