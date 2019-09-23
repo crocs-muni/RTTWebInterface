@@ -77,6 +77,9 @@ def experiment(request, experiment_id):
 
     battery_list = Battery.get_by_experiment_id(c, exp.id)
     battery_list.sort(key=lambda x: x.name)
+    for batt in battery_list:
+        batt.load_job(c)
+
     ctx = {
         'exp': exp,
         'battery_list': battery_list
@@ -98,10 +101,13 @@ def battery(request, battery_id):
     for t in test_list:
         t.variant_count = Variant.get_by_test_id_count(c, t.id)
 
+    job_rec = Job.get_by_id_and_worker(c, batt.job_id) if batt.job_id else None
+
     ctx = {
         'batt': batt,
         'experiment_name': Experiment.get_by_id(c, batt.experiment_id).name,
         'test_list': test_list,
+        'job': job_rec,
         'battery_error_list': BatteryError.get_by_battery_id(c, battery_id),
         'battery_warning_list': BatteryWarning.get_by_battery_id(c, battery_id)
     }

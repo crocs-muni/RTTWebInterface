@@ -42,6 +42,70 @@
             <th>Name of the experiment</th>
             <td>{{ experiment_name }}</td>
         </tr>
+        <tr>
+            <th>Job ID</th>
+            <td>{{ batt.job_id }}</td>
+        </tr>
+    </table>
+
+    {% if job %}
+    <h3>Job Info</h3>
+    <table class="table">
+        <tr>
+            <th>Status</th>
+            <td>{{ job.status }}</td>
+        </tr>
+        <tr>
+            <th>Started</th>
+            <td>{{ job.run_started|date:'H:i, j M, Y' }}</td>
+        </tr>
+        <tr>
+            <th>Heartbeat</th>
+            <td>{{ job.run_heartbeat|date:'H:i, j M, Y' }}</td>
+        </tr>
+        <tr>
+            <th>Finished</th>
+            <td>{{ job.run_finished|date:'H:i, j M, Y' }}</td>
+        </tr>
+        <tr>
+            <th>Retries</th>
+            <td>{{ job.retries }}</td>
+        </tr>
+    </table>
+    {% endif %}
+
+    {% if job and job.worker %}
+    <h3>Worker Info</h3>
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <td>{{ job.worker.id }}</td>
+        </tr>
+        <tr>
+            <th>WID</th>
+            <td>{{ job.worker.wid }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ job.worker.name }}</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td>{{ job.worker.address }}</td>
+        </tr>
+        <tr>
+            <th>Location</th>
+            <td>{{ job.worker.location }}</td>
+        </tr>
+        <tr>
+            <th>Active</th>
+            <td>{{ job.worker.active }}</td>
+        </tr>
+        <tr>
+            <th>Last seen</th>
+            <td>{{ job.worker.last_seen|date:'H:i, j M, Y' }}</td>
+        </tr>
+        {% endif %}
     </table>
 
     <h2>Tests included in battery</h2>

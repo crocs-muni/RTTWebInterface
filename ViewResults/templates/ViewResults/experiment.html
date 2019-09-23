@@ -70,6 +70,7 @@
         <table class="table">
         <tr>
             <th>Name</th>
+            <th>Job</th>
             <th>Assessment</th>
             <th>Passed tests</th>
             <th>Total tests</th>
@@ -87,6 +88,11 @@
             <tr class="success">
             {% endif %}
                 <td>{{ b.name }}</td>
+                <td>
+                    {% if b.job %}
+                    {{ b.job_id }} | {{ b.job.status }}
+                    {%  endif %}
+                </td>
                 <td>{{ b.get_assessment }}</td>
                 {% if b.passed_tests != b.total_tests %}
                 <td><strong>{{ b.passed_tests }}</strong></td>
