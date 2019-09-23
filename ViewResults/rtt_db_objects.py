@@ -146,7 +146,7 @@ class Job(object):
 class Battery(object):
     table_name = "batteries"
     foreign_id_column = "experiment_id"
-    expected_tuple_els = 6
+    expected_tuple_els = 7
 
     def __init__(self, tup):
         check_init_tuple(tup, Battery.expected_tuple_els, self.__class__.__name__)
@@ -157,6 +157,7 @@ class Battery(object):
         self.total_tests = tup[3]
         self.alpha = tup[4]
         self.experiment_id = tup[5]
+        self.job_id = tup[6]
 
     def __str__(self):
         return "{} - ID: {}, Name: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
