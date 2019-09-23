@@ -110,10 +110,42 @@ class Experiment(object):
             return map_db_rows_to_objects(c.fetchall(), Experiment)
 
 
+class Worker(object):
+    table_name = "workers"
+    foreign_id_column = ""
+    expected_tuple_els = 10
+
+    def __init__(self, tup):
+        check_init_tuple(tup, Worker.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.wid = tup[1]
+        self.name = tup[2]
+        self.type = tup[3]
+        self.added = tup[4]
+        self.last_seen = tup[5]
+        self.active = tup[6]
+        self.address = tup[7]
+        self.location = tup[8]
+        self.aux = tup[9]
+
+    def __str__(self):
+        return "{} - ID: {}, WID: {}, Name ID: {}, addr: {}".format(
+            self.__class__.__name__, self.id, self.wid, self.name, self.address)
+
+    @staticmethod
+    def get_all(conn) -> ['Worker']:
+        return get_all_db_objects(conn, Worker, Worker.table_name)
+
+    @staticmethod
+    def get_by_id(conn, worker_id) -> 'Worker':
+        return get_db_object_by_primary_id(conn, Worker, Worker.table_name, worker_id)
+
+
 class Job(object):
     table_name = "jobs"
     foreign_id_column = "experiment_id"
-    expected_tuple_els = 6
+    expected_tuple_els = 11
     
     def __init__(self, tup):
         check_init_tuple(tup, Job.expected_tuple_els, self.__class__.__name__)
@@ -124,10 +156,22 @@ class Job(object):
         self.run_started = tup[3]
         self.run_finished = tup[4]
         self.experiment_id = tup[5]
+        self.run_heartbeat = tup[6]
+        self.worker_id = tup[7]
+        self.worker_pid = tup[8]
+        self.retries = tup[9]
+        self.lock_version = tup[10]
+        self.worker = None  # type: Worker
 
     def __str__(self):
         return "{} - ID: {}, Battery: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
                                                                     self.battery, self.experiment_id)
+
+    def load_worker(self, c):
+        if not self.worker_id:
+            return
+
+        self.worker = Worker.get_by_id(c, self.worker_id)
 
     @staticmethod
     def get_all(conn) -> ['Job']:
@@ -136,6 +180,12 @@ class Job(object):
     @staticmethod
     def get_by_id(conn, job_id) -> 'Job':
         return get_db_object_by_primary_id(conn, Job, Job.table_name, job_id)
+
+    @staticmethod
+    def get_by_id_and_worker(conn, job_id) -> 'Job':
+        job = get_db_object_by_primary_id(conn, Job, Job.table_name, job_id)
+        job.load_worker(conn)
+        return job
 
     @staticmethod
     def get_by_experiment_id(conn, experiment_id) -> ['Job']:
@@ -158,6 +208,7 @@ class Battery(object):
         self.alpha = tup[4]
         self.experiment_id = tup[5]
         self.job_id = tup[6]
+        self.job = None  # type: Job
 
     def __str__(self):
         return "{} - ID: {}, Name: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
@@ -194,6 +245,12 @@ class Battery(object):
             return "Suspect"
         else:
             return "OK"
+
+    def load_job(self, c):
+        if not self.job_id:
+            return
+
+        self.job = Job.get_by_id_and_worker(c, self.job_id)
 
     @staticmethod
     def get_all(conn) -> ['Battery']:
