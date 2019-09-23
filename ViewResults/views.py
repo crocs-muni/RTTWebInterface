@@ -6,6 +6,9 @@ from .rtt_paginator import *
 from .forms import FilterExperimentsForm
 from django.utils.dateparse import parse_datetime
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 def get_auth_error(request):
     if not request.user.is_authenticated:
