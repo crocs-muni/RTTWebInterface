@@ -80,9 +80,13 @@ def experiment(request, experiment_id):
     for batt in battery_list:
         batt.load_job(c)
 
+    job_list = Job.get_by_experiment_id(c, exp.id)
+    job_list.sort(key=lambda x: x.id)
+
     ctx = {
         'exp': exp,
-        'battery_list': battery_list
+        'battery_list': battery_list,
+        'job_list': job_list,
     }
     return render(request, 'ViewResults/experiment.html', ctx)
 

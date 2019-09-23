@@ -110,4 +110,43 @@
         <p>No batteries were yet finished.</p>
     {% endif %}
 
+    {% if job_list %}
+        <h3>Job list</h3>
+        <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th>Heartbeat</th>
+            <th>Retries</th>
+            <th>WID</th>
+            <th>WName</th>
+            <th>WAddr</th>
+            <th></th>
+        </tr>
+
+        {% for j in job_list %}
+            <tr>
+                <td>{{ j.id }}</td>
+                <td>{{ j.status }}</td>
+                <td>{{ j.run_started|date:'H:i, j M, Y' }}</td>
+                <td>{{ j.run_finished|date:'H:i, j M, Y' }}</td>
+                <td>{{ j.run_heartbeat|date:'H:i, j M, Y' }}</td>
+                <td>{{ j.retries }}</td>
+                {% if j.worker %}
+                <td>{{ j.worker.wid }}</td>
+                <td>{{ j.worker.name }}</td>
+                <td>{{ j.worker.address }}</td>
+                {% else %}
+                <td colspan="3"></td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+
+        </table>
+    {% else %}
+        <p>No batteries were yet finished.</p>
+    {% endif %}
+
 {% endblock %}

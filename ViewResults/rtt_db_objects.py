@@ -189,8 +189,11 @@ class Job(object):
 
     @staticmethod
     def get_by_experiment_id(conn, experiment_id) -> ['Job']:
-        return get_db_objects_by_foreign_id(conn, Job, Job.table_name,
+        jobs = get_db_objects_by_foreign_id(conn, Job, Job.table_name,
                                             experiment_id, Job.foreign_id_column)
+        for j in jobs:
+            j.load_worker(conn)
+        return jobs
 
 
 class Battery(object):
