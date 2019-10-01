@@ -131,9 +131,15 @@
                 <td>{{ j.id }}</td>
                 <td>{{ j.status }}</td>
                 <td>{{ j.battery }}</td>
-                <td>{{ j.run_started|date:'H:i, j M, Y' }}</td>
-                <td>{{ j.run_finished|date:'H:i, j M, Y' }}</td>
-                <td>{{ j.run_heartbeat|date:'H:i, j M, Y' }}</td>
+                <td>{{ j.run_started|date:'H:i:s, j M, Y' }}</td>
+                <td>
+                    {% if j.run_seconds and j.run_seconds < 10800 %}
+                        in {{ j.run_seconds }} s
+                    {% else %}
+                        {{ j.run_finished|date:'H:i:s, j M, Y' }} ({{ j.run_seconds }} s)
+                    {% endif %}
+                </td>
+                <td>{{ j.run_heartbeat|date:'H:i:s, j M, Y' }}</td>
                 <td>{{ j.retries }}</td>
                 {% if j.worker %}
                 <td>{{ j.worker.name }}</td>

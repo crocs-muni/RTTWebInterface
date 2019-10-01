@@ -1,5 +1,6 @@
 from scipy.stats import binom
 import math
+import datetime
 
 class Experiment(object):
     table_name = "experiments"
@@ -161,6 +162,8 @@ class Job(object):
         self.worker_pid = tup[8]
         self.retries = tup[9]
         self.lock_version = tup[10]
+        self.run_seconds = None
+        self.run_heartbeat_seconds = None
         self.worker = None  # type: Worker
 
     def __str__(self):
@@ -172,6 +175,10 @@ class Job(object):
             return
 
         self.worker = Worker.get_by_id(c, self.worker_id)
+        if self.run_finished:
+            self.run_seconds = (self.run_finished - self.run_started).total_seconds()
+        if self.run_heartbeat:
+            self.run_heartbeat_seconds = (datetime.datetime.now() - self.run_heartbeat).total_seconds()
 
     @staticmethod
     def get_all(conn) -> ['Job']:
