@@ -135,8 +135,9 @@
                 <td>
                     {% if j.run_seconds and j.run_seconds < 10800 %}
                         in {{ j.run_seconds }} s
-                    {% else %}
+                    {% elif j.run_finished %}
                         {{ j.run_finished|date:'H:i:s, j M, Y' }} ({{ j.run_seconds }} s)
+                    {% else %}
                     {% endif %}
                 </td>
                 <td>{{ j.run_heartbeat|date:'H:i:s, j M, Y' }}</td>
