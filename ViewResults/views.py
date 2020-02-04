@@ -5,9 +5,11 @@ from .rtt_db_objects import *
 from .rtt_paginator import *
 from .forms import FilterExperimentsForm
 from django.utils.dateparse import parse_datetime
+from django import template
 
 import logging
 logger = logging.getLogger(__name__)
+register = template.Library()
 
 
 def get_auth_error(request):
@@ -143,6 +145,7 @@ def test(request, test_id):
         ctx['variant_error_list'] = VariantError.get_by_variant_id(c, var.id)
         ctx['variant_stderr_list'] = VariantStdErr.get_by_variant_id(c, var.id)
         ctx['user_setting_list'] = UserSetting.get_by_variant_id(c, var.id)
+        ctx['variant_result'] = VariantResults.get_by_variant_id(c, var.id)
 
         if len(subtest_list) == 1:
             sub = subtest_list[0]
@@ -185,7 +188,8 @@ def variant(request, variant_id):
         'variant_warning_list': VariantWarning.get_by_variant_id(c, variant_id),
         'variant_stderr_list': VariantStdErr.get_by_variant_id(c, variant_id),
         'user_setting_list': UserSetting.get_by_variant_id(c, variant_id),
-        'subtest_list': subtest_list
+        'subtest_list': subtest_list,
+        'variant_result': VariantResults.get_by_variant_id(c, variant_id),
     }
 
     if len(subtest_list) == 1:

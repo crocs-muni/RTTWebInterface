@@ -78,3 +78,16 @@
         {% endfor %}
     </table>
 {% endif %}
+
+{% if variant_result %}
+     {% load extras %}
+    <h2>Variant results</h2>
+    <table class="table">
+        {% for s in variant_result %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><pre><code class="json">{{ s.message | pretty_json }}</code></pre></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}

@@ -704,6 +704,38 @@ class PValue(object):
                                     subtest_id, PValue.foreign_id_column)
 
 
+class VariantResults(object):
+    table_name = "variant_results"
+    foreign_id_column = "variant_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, VariantResults.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.message = tup[1]
+        self.variant_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Value: {}, Variant ID: {}".format(self.__class__.__name__,
+                                                               self.id, self.message,
+                                                               self.variant_id)
+
+    @staticmethod
+    def get_all(conn) -> ['VariantResults']:
+        return get_all_db_objects(conn, VariantResults, VariantResults.table_name)
+
+    @staticmethod
+    def get_by_id(conn, test_parameter_id) -> 'VariantResults':
+        return get_db_object_by_primary_id(conn, VariantResults, VariantResults.table_name,
+                                           test_parameter_id)
+
+    @staticmethod
+    def get_by_variant_id(conn, variant_id) -> ['VariantResults']:
+        return get_db_objects_by_foreign_id(conn, VariantResults, VariantResults.table_name,
+                                            variant_id, VariantResults.foreign_id_column)
+
+
 '''
 Helper utility methods here.
 Only supposed to be used by the defined models not outside!!!
