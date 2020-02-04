@@ -45,6 +45,17 @@
 
     {% if variant_list %}
         {% if variant_list|length == 1 %}
+            {% if user_setting_list %}
+                <h2>User settings</h2>
+                <table class="table">
+                    {% for u in user_setting_list %}
+                        <tr>
+                            <th>{{ u.name }}</th>
+                            <td>{{ u.value }}</td>
+                            </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
             {% include 'ViewResults/variant_detail.html' %}
         {% else %}
             <h2>Executed variants of test</h2>

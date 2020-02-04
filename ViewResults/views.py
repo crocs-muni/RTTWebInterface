@@ -142,6 +142,7 @@ def test(request, test_id):
         ctx['variant_warning_list'] = VariantWarning.get_by_variant_id(c, var.id)
         ctx['variant_error_list'] = VariantError.get_by_variant_id(c, var.id)
         ctx['variant_stderr_list'] = VariantStdErr.get_by_variant_id(c, var.id)
+        ctx['user_setting_list'] = UserSetting.get_by_variant_id(c, var.id)
 
         if len(subtest_list) == 1:
             sub = subtest_list[0]
