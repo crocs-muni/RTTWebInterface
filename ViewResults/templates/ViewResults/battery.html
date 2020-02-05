@@ -38,6 +38,12 @@
             <th>Confidence level (alpha)</th>
             <td>{{ batt.alpha }}</td>
         </tr>
+        {%  if batt.pvalue is not None %}
+        <tr>
+            <th>P-value</th>
+            <td>{{ batt.pvalue }}</td>
+        </tr>
+        {% endif %}
         <tr>
             <th>Name of the experiment</th>
             <td>{{ experiment_name }}</td>
@@ -116,6 +122,7 @@
                 <th>Name</th>
                 <th>Result</th>
                 <th>Test variants</th>
+                {% if has_pvals %}<th>P-value</th>{% endif %}
                 <th></th>
             </tr>
 
@@ -129,6 +136,7 @@
                     <td>{{ t.name }}</td>
                     <td>{{ t.result }}</td>
                     <td>{{ t.variant_count }}</td>
+                    {% if has_pvals %}<td>{{ t.pvalue|default_if_none:"" }}</td>{% endif %}
                     <td><a href="{% url 'ViewResults:test' t.id %}" class="btn btn-primary btn-sm">Detail</a></td>
                 </tr>
             {% endfor %}

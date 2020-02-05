@@ -79,10 +79,12 @@ def experiment(request, experiment_id):
     if not exp:
         raise Http404("No such experiment.")
 
+    has_pvals = False
     battery_list = Battery.get_by_experiment_id(c, exp.id)
     battery_list.sort(key=lambda x: x.name)
     for batt in battery_list:
         batt.load_job(c)
+        has_pvals |= batt.pvalue is not None
 
     job_list = Job.get_by_experiment_id(c, exp.id)
     job_list.sort(key=lambda x: x.id)
@@ -91,6 +93,7 @@ def experiment(request, experiment_id):
         'exp': exp,
         'battery_list': battery_list,
         'job_list': job_list,
+        'has_pvals': has_pvals,
     }
     return render(request, 'ViewResults/experiment.html', ctx)
 
@@ -106,8 +109,10 @@ def battery(request, battery_id):
         raise Http404("No such battery.")
 
     test_list = Test.get_by_battery_id(c, battery_id)
+    has_pvals = False
     for t in test_list:
         t.variant_count = Variant.get_by_test_id_count(c, t.id)
+        has_pvals |= t.pvalue is not None
 
     job_rec = Job.get_by_id_and_worker(c, batt.job_id) if batt.job_id else None
 
@@ -115,6 +120,7 @@ def battery(request, battery_id):
         'batt': batt,
         'experiment_name': Experiment.get_by_id(c, batt.experiment_id).name,
         'test_list': test_list,
+        'has_pvals': has_pvals,
         'job': job_rec,
         'battery_error_list': BatteryError.get_by_battery_id(c, battery_id),
         'battery_warning_list': BatteryWarning.get_by_battery_id(c, battery_id)

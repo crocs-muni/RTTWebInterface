@@ -74,6 +74,7 @@
             <th>Assessment</th>
             <th>Passed tests</th>
             <th>Total tests</th>
+            {% if has_pvals %}<th>P-value</th>{% endif %}
             <th></th>
         </tr>
 
@@ -101,6 +102,7 @@
                 <td>{{ b.passed_tests }}</td>
                 <td>{{ b.total_tests }}</td>
                 {% endif %}
+                {% if has_pvals %}<td>{{ b.pvalue|default_if_none:"" }}</td>{% endif %}
                 <td><a href="{% url 'ViewResults:battery' b.id %}" class="btn btn-primary btn-sm">Detail</a></td>
             </tr>
         {% endfor %}
