@@ -4,6 +4,7 @@ from django.db import connections
 from .rtt_db_objects import *
 from .rtt_paginator import *
 from .forms import FilterExperimentsForm
+from .booltest import get_booltest_info
 from django.utils.dateparse import parse_datetime
 from django import template
 
@@ -15,6 +16,7 @@ register = template.Library()
 def get_auth_error(request):
     if not request.user.is_authenticated:
         return render(request, 'access_denied.html')
+
 
 # Create your views here.
 def index(request):
@@ -146,6 +148,7 @@ def test(request, test_id):
         ctx['variant_stderr_list'] = VariantStdErr.get_by_variant_id(c, var.id)
         ctx['user_setting_list'] = UserSetting.get_by_variant_id(c, var.id)
         ctx['variant_result'] = VariantResults.get_by_variant_id(c, var.id)
+        ctx['booltest'] = get_booltest_info(ctx['variant_result'], c, var.id)
 
         if len(subtest_list) == 1:
             sub = subtest_list[0]
@@ -191,6 +194,7 @@ def variant(request, variant_id):
         'subtest_list': subtest_list,
         'variant_result': VariantResults.get_by_variant_id(c, variant_id),
     }
+    ctx['booltest'] = get_booltest_info(ctx['variant_result'], c, variant_id)
 
     if len(subtest_list) == 1:
         sub = subtest_list[0]
