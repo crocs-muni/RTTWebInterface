@@ -8,21 +8,17 @@ logger = logging.getLogger(__name__)
 register = template.Library()
 
 
-def noindent_poly_key(key, val, fnc):
-    if key != "poly":
-        return fnc(val)
-    return NoIndent(val)
-
-
-def noindent_poly(val):
-    if isinstance(val, list):
+def noindent_poly(val, key=None):
+    if key and key == 'poly':
+        return NoIndent(val)
+    elif isinstance(val, list):
         return [noindent_poly(x) for x in val]
     elif isinstance(val, tuple):
         return tuple([noindent_poly(x) for x in val])
     elif isinstance(val, OrderedDict):
-        return OrderedDict([(x, noindent_poly_key(x, val[x], noindent_poly)) for x in val])
+        return OrderedDict([(x, noindent_poly(val[x], x)) for x in val])
     elif isinstance(val, dict):
-        return dict([(x, noindent_poly_key(x, val[x], noindent_poly)) for x in val])
+        return dict([(x, noindent_poly(val[x], x)) for x in val])
     else:
         return val
 
