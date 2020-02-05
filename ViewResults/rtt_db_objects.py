@@ -206,7 +206,7 @@ class Job(object):
 class Battery(object):
     table_name = "batteries"
     foreign_id_column = "experiment_id"
-    expected_tuple_els = 7
+    expected_tuple_els = 8
 
     def __init__(self, tup):
         check_init_tuple(tup, Battery.expected_tuple_els, self.__class__.__name__)
@@ -218,6 +218,7 @@ class Battery(object):
         self.alpha = tup[4]
         self.experiment_id = tup[5]
         self.job_id = tup[6]
+        self.pvalue = tup[7]
         self.job = None  # type: Job
 
     def __str__(self):
@@ -339,7 +340,7 @@ class BatteryWarning(object):
 class Test(object):
     table_name = "tests"
     foreign_id_column = "battery_id"
-    expected_tuple_els = 6
+    expected_tuple_els = 7
 
     def __init__(self, tup):
         check_init_tuple(tup, Test.expected_tuple_els, self.__class__.__name__)
@@ -350,6 +351,7 @@ class Test(object):
         self.result = tup[3]
         self.test_index = tup[4]
         self.battery_id = tup[5]
+        self.pvalue = tup[6]
 
     def __str__(self):
         return "{} - ID: {}, Name: {}, Battery ID: {}".format(self.__class__.__name__, self.id,
