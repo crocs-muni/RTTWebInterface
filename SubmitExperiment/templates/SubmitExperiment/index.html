@@ -51,6 +51,8 @@
             {{ form.batt_tu_rab|bootstrap }}
             {{ form.batt_tu_ab|bootstrap }}
             {{ form.batt_tu_bab|bootstrap }}
+            {{ form.batt_bool1|bootstrap }}
+            {{ form.batt_bool2|bootstrap }}
             <hr/>
             {{ form.batt_tu_bc|bootstrap }}
         </fieldset>
@@ -84,6 +86,8 @@
                 document.getElementById('{{ form.batt_tu_rab.id_for_label }}').checked ^= true;
                 document.getElementById('{{ form.batt_tu_ab.id_for_label }}').checked ^= true;
                 document.getElementById('{{ form.batt_tu_bab.id_for_label }}').checked ^= true;
+                document.getElementById('{{ form.batt_bool1.id_for_label }}').checked ^= true;
+                document.getElementById('{{ form.batt_bool2.id_for_label }}').checked ^= true;
                 //document.getElementById('{{ form.batt_tu_bc.id_for_label }}').checked ^= true;
         }
 
@@ -95,8 +99,10 @@
                 document.getElementById('{{ form.batt_tu_bc.id_for_label }}').checked == false &&
                 document.getElementById('{{ form.batt_tu_rab.id_for_label }}').checked == false &&
                 document.getElementById('{{ form.batt_tu_ab.id_for_label }}').checked == false &&
-                document.getElementById('{{ form.batt_tu_bab.id_for_label }}').checked == false) {
-
+                document.getElementById('{{ form.batt_tu_bab.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_bool1.id_for_label }}').checked == false &&
+                document.getElementById('{{ form.batt_bool2.id_for_label }}').checked == false
+            ) {
                 document.getElementById('batt_error').style.display = "";
                 return false;
             } else {

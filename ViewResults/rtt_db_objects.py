@@ -1,5 +1,6 @@
 from scipy.stats import binom
 import math
+import datetime
 
 class Experiment(object):
     table_name = "experiments"
@@ -110,10 +111,42 @@ class Experiment(object):
             return map_db_rows_to_objects(c.fetchall(), Experiment)
 
 
+class Worker(object):
+    table_name = "workers"
+    foreign_id_column = ""
+    expected_tuple_els = 10
+
+    def __init__(self, tup):
+        check_init_tuple(tup, Worker.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.wid = tup[1]
+        self.name = tup[2]
+        self.type = tup[3]
+        self.added = tup[4]
+        self.last_seen = tup[5]
+        self.active = tup[6]
+        self.address = tup[7]
+        self.location = tup[8]
+        self.aux = tup[9]
+
+    def __str__(self):
+        return "{} - ID: {}, WID: {}, Name ID: {}, addr: {}".format(
+            self.__class__.__name__, self.id, self.wid, self.name, self.address)
+
+    @staticmethod
+    def get_all(conn) -> ['Worker']:
+        return get_all_db_objects(conn, Worker, Worker.table_name)
+
+    @staticmethod
+    def get_by_id(conn, worker_id) -> 'Worker':
+        return get_db_object_by_primary_id(conn, Worker, Worker.table_name, worker_id)
+
+
 class Job(object):
     table_name = "jobs"
     foreign_id_column = "experiment_id"
-    expected_tuple_els = 6
+    expected_tuple_els = 11
     
     def __init__(self, tup):
         check_init_tuple(tup, Job.expected_tuple_els, self.__class__.__name__)
@@ -124,10 +157,28 @@ class Job(object):
         self.run_started = tup[3]
         self.run_finished = tup[4]
         self.experiment_id = tup[5]
+        self.run_heartbeat = tup[6]
+        self.worker_id = tup[7]
+        self.worker_pid = tup[8]
+        self.retries = tup[9]
+        self.lock_version = tup[10]
+        self.run_seconds = None
+        self.run_heartbeat_seconds = None
+        self.worker = None  # type: Worker
 
     def __str__(self):
         return "{} - ID: {}, Battery: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
                                                                     self.battery, self.experiment_id)
+
+    def load_worker(self, c):
+        if not self.worker_id:
+            return
+
+        self.worker = Worker.get_by_id(c, self.worker_id)
+        if self.run_finished:
+            self.run_seconds = (self.run_finished - self.run_started).total_seconds()
+        if self.run_heartbeat:
+            self.run_heartbeat_seconds = (datetime.datetime.now() - self.run_heartbeat).total_seconds()
 
     @staticmethod
     def get_all(conn) -> ['Job']:
@@ -138,15 +189,24 @@ class Job(object):
         return get_db_object_by_primary_id(conn, Job, Job.table_name, job_id)
 
     @staticmethod
+    def get_by_id_and_worker(conn, job_id) -> 'Job':
+        job = get_db_object_by_primary_id(conn, Job, Job.table_name, job_id)
+        job.load_worker(conn)
+        return job
+
+    @staticmethod
     def get_by_experiment_id(conn, experiment_id) -> ['Job']:
-        return get_db_objects_by_foreign_id(conn, Job, Job.table_name,
+        jobs = get_db_objects_by_foreign_id(conn, Job, Job.table_name,
                                             experiment_id, Job.foreign_id_column)
+        for j in jobs:
+            j.load_worker(conn)
+        return jobs
 
 
 class Battery(object):
     table_name = "batteries"
     foreign_id_column = "experiment_id"
-    expected_tuple_els = 6
+    expected_tuple_els = 8
 
     def __init__(self, tup):
         check_init_tuple(tup, Battery.expected_tuple_els, self.__class__.__name__)
@@ -157,6 +217,9 @@ class Battery(object):
         self.total_tests = tup[3]
         self.alpha = tup[4]
         self.experiment_id = tup[5]
+        self.job_id = tup[6]
+        self.pvalue = tup[7]
+        self.job = None  # type: Job
 
     def __str__(self):
         return "{} - ID: {}, Name: {}, Experiment ID: {}".format(self.__class__.__name__, self.id,
@@ -193,6 +256,12 @@ class Battery(object):
             return "Suspect"
         else:
             return "OK"
+
+    def load_job(self, c):
+        if not self.job_id:
+            return
+
+        self.job = Job.get_by_id_and_worker(c, self.job_id)
 
     @staticmethod
     def get_all(conn) -> ['Battery']:
@@ -271,7 +340,7 @@ class BatteryWarning(object):
 class Test(object):
     table_name = "tests"
     foreign_id_column = "battery_id"
-    expected_tuple_els = 6
+    expected_tuple_els = 7
 
     def __init__(self, tup):
         check_init_tuple(tup, Test.expected_tuple_els, self.__class__.__name__)
@@ -282,6 +351,7 @@ class Test(object):
         self.result = tup[3]
         self.test_index = tup[4]
         self.battery_id = tup[5]
+        self.pvalue = tup[6]
 
     def __str__(self):
         return "{} - ID: {}, Name: {}, Battery ID: {}".format(self.__class__.__name__, self.id,
@@ -634,6 +704,38 @@ class PValue(object):
     def get_by_subtest_id_count(conn, subtest_id) -> int:
         return get_foreign_id_count(conn, PValue.table_name,
                                     subtest_id, PValue.foreign_id_column)
+
+
+class VariantResults(object):
+    table_name = "variant_results"
+    foreign_id_column = "variant_id"
+    expected_tuple_els = 3
+
+    def __init__(self, tup):
+        check_init_tuple(tup, VariantResults.expected_tuple_els, self.__class__.__name__)
+
+        self.id = tup[0]
+        self.message = tup[1]
+        self.variant_id = tup[2]
+
+    def __str__(self):
+        return "{} - ID: {}, Value: {}, Variant ID: {}".format(self.__class__.__name__,
+                                                               self.id, self.message,
+                                                               self.variant_id)
+
+    @staticmethod
+    def get_all(conn) -> ['VariantResults']:
+        return get_all_db_objects(conn, VariantResults, VariantResults.table_name)
+
+    @staticmethod
+    def get_by_id(conn, test_parameter_id) -> 'VariantResults':
+        return get_db_object_by_primary_id(conn, VariantResults, VariantResults.table_name,
+                                           test_parameter_id)
+
+    @staticmethod
+    def get_by_variant_id(conn, variant_id) -> ['VariantResults']:
+        return get_db_objects_by_foreign_id(conn, VariantResults, VariantResults.table_name,
+                                            variant_id, VariantResults.foreign_id_column)
 
 
 '''

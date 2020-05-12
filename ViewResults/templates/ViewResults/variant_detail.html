@@ -78,3 +78,66 @@
         {% endfor %}
     </table>
 {% endif %}
+
+{% if booltest %}
+    {% load extras %}
+    <h2>BoolTest results</h2>
+    <table class="table">
+        <tr>
+            <td>Halving mode</td>
+            <td>{{ booltest.halving }}</td>
+        </tr>
+        <tr>
+            <td>Best distinguisher</td>
+            <td><pre><code class="json">{{ booltest.best_dist_poly | pretty_poly }}</code></pre></td>
+        </tr>
+    {% if booltest.halving %}
+        <tr><td><strong>Learning phase</strong></td><td></td></tr>
+    {% endif %}
+        <tr>
+            <td>Z-score</td>
+            <td>{{ booltest.best_dist_zscore }}</td>
+        </tr>
+        <tr>
+            <td>Alpha</td>
+            <td>{{ booltest.ref_alpha }}</td>
+        </tr>
+        <tr>
+            <td>Accepting Z-score</td>
+            <td>[{{ booltest.ref_zscore_min }}, {{ booltest.ref_zscore_max }}]</td>
+        </tr>
+        <tr>
+            <td>Rejects</td>
+            <td>{{ booltest.rejects }}</td>
+        </tr>
+
+    {% if booltest.halving %}
+        <tr><td><strong>Eval phase</strong></td><td></td></tr>
+        <tr>
+            <td>Z-score</td>
+            <td>{{ booltest.best_dist_zscore_halving }}</td>
+        </tr>
+        <tr>
+            <td>P-value</td>
+            <td>{{ booltest.pval }}</td>
+        </tr>
+    {% endif %}
+        <tr>
+            <td>Time elapsed</td>
+            <td>{{ booltest.time_elapsed }} sec</td>
+        </tr>
+    </table>
+{% endif %}
+
+{% if variant_result %}
+    {% load extras %}
+    <h2>Variant results</h2>
+    <table class="table">
+        {% for s in variant_result %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td><pre><code class="json">{{ s.message | pretty_json_booltest }}</code></pre></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endif %}

@@ -70,9 +70,11 @@
         <table class="table">
         <tr>
             <th>Name</th>
+            <th>Job</th>
             <th>Assessment</th>
             <th>Passed tests</th>
             <th>Total tests</th>
+            {% if has_pvals %}<th>P-value</th>{% endif %}
             <th></th>
         </tr>
 
@@ -87,6 +89,11 @@
             <tr class="success">
             {% endif %}
                 <td>{{ b.name }}</td>
+                <td>
+                    {% if b.job %}
+                    {{ b.job_id }}
+                    {%  endif %}
+                </td>
                 <td>{{ b.get_assessment }}</td>
                 {% if b.passed_tests != b.total_tests %}
                 <td><strong>{{ b.passed_tests }}</strong></td>
@@ -95,7 +102,54 @@
                 <td>{{ b.passed_tests }}</td>
                 <td>{{ b.total_tests }}</td>
                 {% endif %}
+                {% if has_pvals %}<td>{{ b.pvalue|default_if_none:"" }}</td>{% endif %}
                 <td><a href="{% url 'ViewResults:battery' b.id %}" class="btn btn-primary btn-sm">Detail</a></td>
+            </tr>
+        {% endfor %}
+
+        </table>
+    {% else %}
+        <p>No batteries were yet finished.</p>
+    {% endif %}
+
+    {% if job_list %}
+        <h3>Job list</h3>
+        <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Battery</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th>Heartbeat</th>
+            <th>Retries</th>
+            <th>WName</th>
+            <th>WAddr</th>
+            <th></th>
+        </tr>
+
+        {% for j in job_list %}
+            <tr>
+                <td>{{ j.id }}</td>
+                <td>{{ j.status }}</td>
+                <td>{{ j.battery }}</td>
+                <td>{{ j.run_started|date:'H:i:s, j M, Y' }}</td>
+                <td>
+                    {% if j.run_seconds and j.run_seconds < 10800 %}
+                        in {{ j.run_seconds }} s
+                    {% elif j.run_finished %}
+                        {{ j.run_finished|date:'H:i:s, j M, Y' }} ({{ j.run_seconds }} s)
+                    {% else %}
+                    {% endif %}
+                </td>
+                <td>{{ j.run_heartbeat|date:'H:i:s, j M, Y' }}</td>
+                <td>{{ j.retries }}</td>
+                {% if j.worker %}
+                <td>{{ j.worker.name }}</td>
+                <td>{{ j.worker.address }}</td>
+                {% else %}
+                <td colspan="3"></td>
+                {% endif %}
             </tr>
         {% endfor %}
 

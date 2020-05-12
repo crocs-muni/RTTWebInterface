@@ -60,6 +60,12 @@ class ExperimentForm(forms.Form):
     batt_tu_bab = forms.BooleanField(
         label='TestU01 Block Alphabit',
         required=False)
+    batt_bool1 = forms.BooleanField(
+        label='BoolTest 1',
+        required=False)
+    batt_bool2 = forms.BooleanField(
+        label='BoolTest 2',
+        required=False)
 
     def clean(self):
         cleaned_data = super().clean()
@@ -74,6 +80,8 @@ class ExperimentForm(forms.Form):
         tu_rab = cleaned_data.get("batt_tu_rab")
         tu_ab = cleaned_data.get("batt_tu_ab")
         tu_bab = cleaned_data.get("batt_tu_bab")
+        bool1 = cleaned_data.get("batt_bool1")
+        bool2 = cleaned_data.get("batt_bool2")
 
         errors = []
 
@@ -91,7 +99,7 @@ class ExperimentForm(forms.Form):
         if cfg_settings_sum > 1:
             errors.append("You specified multiple configurations of the experiment.")
 
-        if not (sts or die or tu_sc or tu_c or tu_bc or tu_rab or tu_ab or tu_bab):
+        if not (sts or die or tu_sc or tu_c or tu_bc or tu_rab or tu_ab or tu_bab or bool1 or bool2):
             errors.append("No battery was set for execution.")
 
         if len(errors) > 0:

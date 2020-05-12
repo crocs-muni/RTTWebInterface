@@ -4,12 +4,19 @@ from django.db import connections
 from .rtt_db_objects import *
 from .rtt_paginator import *
 from .forms import FilterExperimentsForm
+from .booltest import get_booltest_info
 from django.utils.dateparse import parse_datetime
+from django import template
+
+import logging
+logger = logging.getLogger(__name__)
+register = template.Library()
 
 
 def get_auth_error(request):
     if not request.user.is_authenticated:
         return render(request, 'access_denied.html')
+
 
 # Create your views here.
 def index(request):
@@ -72,11 +79,21 @@ def experiment(request, experiment_id):
     if not exp:
         raise Http404("No such experiment.")
 
+    has_pvals = False
     battery_list = Battery.get_by_experiment_id(c, exp.id)
     battery_list.sort(key=lambda x: x.name)
+    for batt in battery_list:
+        batt.load_job(c)
+        has_pvals |= batt.pvalue is not None
+
+    job_list = Job.get_by_experiment_id(c, exp.id)
+    job_list.sort(key=lambda x: x.id)
+
     ctx = {
         'exp': exp,
-        'battery_list': battery_list
+        'battery_list': battery_list,
+        'job_list': job_list,
+        'has_pvals': has_pvals,
     }
     return render(request, 'ViewResults/experiment.html', ctx)
 
@@ -92,13 +109,19 @@ def battery(request, battery_id):
         raise Http404("No such battery.")
 
     test_list = Test.get_by_battery_id(c, battery_id)
+    has_pvals = False
     for t in test_list:
         t.variant_count = Variant.get_by_test_id_count(c, t.id)
+        has_pvals |= t.pvalue is not None
+
+    job_rec = Job.get_by_id_and_worker(c, batt.job_id) if batt.job_id else None
 
     ctx = {
         'batt': batt,
         'experiment_name': Experiment.get_by_id(c, batt.experiment_id).name,
         'test_list': test_list,
+        'has_pvals': has_pvals,
+        'job': job_rec,
         'battery_error_list': BatteryError.get_by_battery_id(c, battery_id),
         'battery_warning_list': BatteryWarning.get_by_battery_id(c, battery_id)
     }
@@ -129,6 +152,9 @@ def test(request, test_id):
         ctx['variant_warning_list'] = VariantWarning.get_by_variant_id(c, var.id)
         ctx['variant_error_list'] = VariantError.get_by_variant_id(c, var.id)
         ctx['variant_stderr_list'] = VariantStdErr.get_by_variant_id(c, var.id)
+        ctx['user_setting_list'] = UserSetting.get_by_variant_id(c, var.id)
+        ctx['variant_result'] = VariantResults.get_by_variant_id(c, var.id)
+        ctx['booltest'] = get_booltest_info(ctx['variant_result'], c, var.id)
 
         if len(subtest_list) == 1:
             sub = subtest_list[0]
@@ -171,8 +197,10 @@ def variant(request, variant_id):
         'variant_warning_list': VariantWarning.get_by_variant_id(c, variant_id),
         'variant_stderr_list': VariantStdErr.get_by_variant_id(c, variant_id),
         'user_setting_list': UserSetting.get_by_variant_id(c, variant_id),
-        'subtest_list': subtest_list
+        'subtest_list': subtest_list,
+        'variant_result': VariantResults.get_by_variant_id(c, variant_id),
     }
+    ctx['booltest'] = get_booltest_info(ctx['variant_result'], c, variant_id)
 
     if len(subtest_list) == 1:
         sub = subtest_list[0]

@@ -11,6 +11,8 @@ import subprocess
 import shlex
 import os
 import _thread
+import logging
+logger = logging.getLogger(__name__)
 
 
 # Checks whether user is authenticated. If he is not,
@@ -64,6 +66,10 @@ def submit_experiment(form, email, in_file_path, cfg_file_path):
         args_str += ' --tu01_alphabit '
     if form.cleaned_data['batt_tu_bab']:
         args_str += ' --tu01_blockalphabit '
+    if form.cleaned_data['batt_bool1']:
+        args_str += ' --booltest-1 '
+    if form.cleaned_data['batt_bool2']:
+        args_str += ' --booltest-2 '
 
     if email is not None and len(email) > 0:
         args_str += ' --email {} '.format(email)
@@ -74,6 +80,7 @@ def submit_experiment(form, email, in_file_path, cfg_file_path):
     log_file = os.path.splitext(settings.SUBMIT_EXP_BINARY)[0]
     log_file += ".log"
     with open(log_file, 'a') as f_null:
+        logger.info('Executing: %s' % (args_str,))
         subprocess.call(shlex.split(args_str),
                         stdout=f_null, stderr=subprocess.STDOUT)
 
